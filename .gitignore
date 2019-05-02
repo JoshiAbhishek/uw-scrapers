@@ -1,3 +1,9 @@
+# Credentials file
+creds.js
+
+# Data directory
+data/
+
 # Logs
 logs
 *.log

@@ -1,0 +1,23 @@
+{
+  "name": "uw-scrapers",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoshiAbhishek/uw-scrapers.git"
+  },
+  "author": "Abhishek Joshi",
+  "license": "GNU Affero General Public License",
+  "bugs": {
+    "url": "https://github.com/JoshiAbhishek/uw-scrapers/issues"
+  },
+  "homepage": "https://github.com/JoshiAbhishek/uw-scrapers#readme",
+  "dependencies": {
+    "progress": "^2.0.3",
+    "puppeteer": "^1.14.0"
+  }
+}
