@@ -6,28 +6,28 @@ const CourseCatalogScraper = require("../course_catalog/course_catalog_scraper.j
 
 const TIME_SCHEDULE_URL = "https://www.washington.edu/students/timeschd/";
 
-//
+// Selector for links to courses offered by major
 const MAJOR_LINK = "#uw-container-inner > div.container > div.row > ul > li > a";
 
-//
+// Selector for course SLN links from a major's time schedule page
 const COURSE_LINK = "table > tbody > tr > td > pre > a:first-of-type";
 
-//
+// Regex for matching the format of course credits
 const COURSE_CREDITS_REGEX = new RegExp(/\s*(\d+\-\d+|\-\d+|\d+\-|\d+\/\d+|\/\d+|VAR|\d+\-\d+\,\smax\.\s\d+|\d+\/\d+\,\smax\.\s\d+|\*\,\smax\.\s\d+|\.\d+|\d+\.\d+|\d+|\s*)/);
 
-//
+// Regex for matching a course's type
 const COURSE_TYPE_REGEX = new RegExp(/\s*(LB|QZ|SM|IS|CK|CL|CO|LC|PR|ST|\s*)/);
 
-//
+// Regex for matching a course's instructor
 const COURSE_INSTRUCTOR_REGEX = new RegExp(/([A-Za-z'\.\-\s]+\,[A-Za-z'\.\-]+(\s(?!Open|Closed)[A-Za-z'\.\s\-\,]+?|\s*)|\s*)/);
 
-//
+// Regex for matching a course's meeting time (day and hour) and location (building and room)
 const COURSE_TIME_AND_LOCATION_REGEX = new RegExp(/\s*(to\sbe\sarranged|[A-Za-z\.]+\s\d+\-\d+[P]*)\s*([A-Z\d]+\s[A-Z\d\+\-]+|\*\s\*|[\*]+?|\s*)/);
 
-//
+// Regex for matching the SLN and section of a course
 const COURSE_REGEX_START = new RegExp(/((?<=[A-Za-z>\s]+|\s*)\d+)\s([A-Z\d]+)/);
 
-//
+// Regex for matching a course's status, grading scheme (CR/NC or normal), fee, and other type
 const COURSE_REGEX_END = new RegExp(/\s*(Open|Closed|\s*)\s*(\d+\/\s\d+(?:E|\s*))\s*(CR\/NC|\s*)\s*(\$\d+|\s*)(\s*(?<!\d+)[BDEHJORSW%#]|\s*)/);
 
 /*
@@ -49,6 +49,7 @@ Course regex array results (by index):
 */
 const COURSE_REGEX = new RegExp(COURSE_REGEX_START.source + COURSE_CREDITS_REGEX.source + COURSE_TYPE_REGEX.source + COURSE_TIME_AND_LOCATION_REGEX.source + COURSE_INSTRUCTOR_REGEX.source + COURSE_REGEX_END.source);
 
+// Add an extend method to the base Array object for adding the contents of another array to the end of the current array
 Array.prototype.extend = function (other) {
     other.forEach(function (v) {
         this.push(v)
@@ -56,17 +57,19 @@ Array.prototype.extend = function (other) {
 }
 
 /**
- * Descr
- * @param {string} str - The 
- * @returns {string} The
+ * Checks the passed string captured by a course regex for being defined and relevant 
+ * @param {String} str - String captured by a course regex
+ * @returns {String} - An empty string if the passed string is not valid, or the passed string with no surrounding whitespaces 
  */
 function checkRegexGroup(str) {
     return (str === undefined || str == null || str == " " || str.trim() == "*" || str.trim() == "* *" || str.trim() == "to be arranged" ? "" : str.trim());
 }
 
 /**
- * 
- * @param {*} str 
+ * Extracts course details from the passed string representation of it as scraped from the UW Time Schedule
+ * @param {String} str - String representation of a course section or lecture as scraped from the UW Time Schedule without formatting 
+ * @param {Object} course - A JavaScript object representation of a course section
+ * @returns {Object} - The passed course JavaScript Object with filled values for the course section's details 
  */
 function extractCourseInfo(str, course) {
     if (checkRegexGroup(str) == "" || course === undefined || course == null) {
@@ -184,9 +187,10 @@ function extractCourseInfo(str, course) {
 }
 
 /**
- * 
- * @param {*} page 
- * @param {*} url 
+ * Scrapes a course section's details from its corresponding NetID-only accessible UW Time Schedule page
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} url - The URL of the course section's detail page
+ * @returns {Object} - A JavaScript Object representing a course section's details 
  */
 async function scrapeCourseSectionInfo(page, url) {
     await BrowserUtils.navigateWithLoginCheck(page, url);
@@ -291,9 +295,10 @@ async function scrapeCourseSectionInfo(page, url) {
 }
 
 /**
- * 
- * @param {*} page 
- * @param {*} url 
+ * Scrapes course section information for a given major using the NetID-only accessible course section details page
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} url - The URL for a major's time schedule page to scrape
+ * @returns {Object[]} - An array of the scraped course section objects
  */
 async function scrapeCoursesForMajorWithDetails(page, url) {
     await page.goto(url);
@@ -312,10 +317,10 @@ async function scrapeCoursesForMajorWithDetails(page, url) {
 }
 
 /**
- * 
- * @param {*} page 
- * @param {*} url 
- * @param {*} courses 
+ * Scrapes course section information for a given major
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} url - The URL for a major's time schedule page to scrape
+ * @param {Object[]} courses - An array of the scraped course section objects
  */
 async function scrapeCoursesForMajor(page, url, courses, includeCatalogInfo) {
     if (courses === undefined || courses == null) {
@@ -392,9 +397,10 @@ async function scrapeCoursesForMajor(page, url, courses, includeCatalogInfo) {
 }
 
 /**
- * 
- * @param {*} page 
- * @param {*} quarter 
+ * Scrapes links for major's time schedule pages of the given quarter
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} quarter - The desired quarter to scrape
+ * @returns {String[]} - The scraped links for majors' time schedule pages
  */
 async function scrapeMajorLinksByQuarter(page, quarter) {
     await page.goto(TIME_SCHEDULE_URL + quarter);
@@ -413,9 +419,10 @@ async function scrapeMajorLinksByQuarter(page, quarter) {
 }
 
 /**
- * 
- * @param {*} page 
- * @param {*} quarter 
+ * Scrapes course section information of all majors for the given quarter
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} quarter - The desired quarter to scrape
+ * @returns {Object[]} - An array of the scraped course section objects
  */
 async function scrapeAllCoursesByQuarter(page, quarter) {
     console.log("> Scraping UW Time Schedule Major Links");
@@ -440,10 +447,10 @@ async function scrapeAllCoursesByQuarter(page, quarter) {
 }
 
 /**
- * 
- * @param {*} page 
- * @param {*} quarter 
- * @param {*} exportFunction 
+ * Scrapes and exports course section information for each major of the given quarter
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} quarter - The desired quarter to scrape
+ * @param {Function} exportFunction - The exportFunction to callback - passes file name and data
  */
 async function exportCoursesByMajorAndQuarter(page, quarter, exportFunction) {
     console.log("> Scraping UW Time Schedule Major Links");
@@ -473,10 +480,10 @@ async function exportCoursesByMajorAndQuarter(page, quarter, exportFunction) {
 }
 
 /**
- * 
- * @param {*} page 
- * @param {*} quarter 
- * @param {*} exportFunction 
+ * Scrapes and exports all course section information for the given quarter
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} quarter - The desired quarter to scrape
+ * @param {Function} exportFunction - The exportFunction to callback - passes data
  */
 async function exportAllCoursesByQuarter(page, quarter, exportFunction) {
     var courses = await scrapeAllCoursesByQuarter(page, quarter);
@@ -485,10 +492,10 @@ async function exportAllCoursesByQuarter(page, quarter, exportFunction) {
 }
 
 /**
- * 
- * @param {*} page 
- * @param {*} url 
- * @param {*} exportFunction 
+ * Scrapes and exports course section information for the given major's time schedule page
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} url - The URL for a major's time schedule page to scrape
+ * @param {Function} exportFunction - The exportFunction to callback - passes data
  */
 async function exportCoursesForMajor(page, url, exportFunction) {
     var courses = await scrapeCoursesForMajor(page, url, [], true);
@@ -497,10 +504,10 @@ async function exportCoursesForMajor(page, url, exportFunction) {
 }
 
 /**
- * 
- * @param {*} page 
- * @param {*} quarter 
- * @param {*} exportFunction 
+ * Scrapes and exports links to majors' time schedule pages for a quarter
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} quarter - The desired quarter to scrape
+ * @param {Function} exportFunction - The exportFunction to callback - passes data
  */
 async function exportMajorLinksByQuarter(page, quarter, exportFunction) {
     var major_links = await scrapeMajorLinksByQuarter(page, quarter);
