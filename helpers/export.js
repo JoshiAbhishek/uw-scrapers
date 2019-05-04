@@ -1,63 +1,76 @@
 "use strict";
 
-const fs = require('fs');
+const FS = require('fs');
 
 /**
  * 
- * @param {*} data_directory 
- * @param {*} file_name 
- * @param {*} data 
+ * @param {String} dataDirectory - The file directory to export data to
+ * @param {String} fileName - The name of the file to be exported
+ * @param {Object} data - The data to be exported
+ * @returns {String} - The local url of the file to be exported 
  */
-function exportJSONObject(data_directory, file_name, data) {
-    if(!file_name.endsWith(".json")) {
-        file_name += ".json";
+function exportFoundation(dataDirectory, fileName, data) {
+    if (data === undefined || data == null) {
+        console.log(">> ERROR: data must be defined and not null to export");
+        return null;
     }
 
-    var url = data_directory + file_name;
+    if (dataDirectory === undefined || dataDirectory == null || fileName === undefined || fileName == null) {
+        console.log(">> ERROR: dataDirectory and fileName must be defined and not null to export");
+        return null;
+    }
+
+    if (!fileName.endsWith(".json")) {
+        fileName += ".json";
+    }
+
+    var url = dataDirectory + fileName;
 
     console.log("> Exporting to " + url);
+
+    return url;
+}
+
+/**
+ * 
+ * @param {String} dataDirectory - The file directory to export data to
+ * @param {String} fileName - The name of the file to be exported
+ * @param {Object} data - The data to be exported
+ */
+function exportJSONObject(dataDirectory, fileName, data) {
+    var url = exportFoundation(dataDirectory, fileName, data);
+    if (url == null) { return; }
 
     var json = JSON.stringify(data);
-    fs.writeFileSync(url, json, 'utf8');
+    FS.writeFileSync(url, json, 'utf8');
 }
 
 /**
  * 
- * @param {*} data_directory 
- * @param {*} file_name 
- * @param {*} property_name 
- * @param {*} data 
+ * @param {String} dataDirectory - The file directory to export data to
+ * @param {String} fileName - The name of the file to be exported
+ * @param {String} propertyName - The name of the property the exported data will be assigned to
+ * @param {Object[]} data - The data to be exported
  */
-function exportJSONArray(data_directory, file_name, property_name, data) {
-    if(!file_name.endsWith(".json")) {
-        file_name += ".json";
-    }
+function exportJSONArray(dataDirectory, fileName, propertyName, data) {
+    var url = exportFoundation(dataDirectory, fileName, data);
+    if (url == null) { return; }
 
-    var url = data_directory + file_name;
-
-    console.log("> Exporting to " + url);
-
-    var json = JSON.stringify({[property_name] : data});
-    fs.writeFileSync(url, json, 'utf8');
+    var json = JSON.stringify({ [propertyName]: data });
+    FS.writeFileSync(url, json, 'utf8');
 }
 
 /**
  * 
- * @param {*} data_directory 
- * @param {*} file_name 
- * @param {*} headers_array 
- * @param {*} data 
+ * @param {String} dataDirectory - The file directory to export data to
+ * @param {String} fileName - The name of the file to be exported
+ * @param {String[]} headersArray - The headers corresponding to the data's properties
+ * @param {Object[]} data - The data to be exported
  */
-function exportJSONArrayToCSV(data_directory, file_name, headers_array, data) {
-    if(!file_name.endsWith(".json")) {
-        file_name += ".json";
-    }
-    
-    var url = data_directory + file_name;
-    
-    console.log("> Exporting to " + url);
+function exportJSONArrayToCSV(dataDirectory, fileName, headersArray, data) {
+    var url = exportFoundation(dataDirectory, fileName, data);
+    if (url == null) { return; }
 
-    
 }
 
 module.exports = {

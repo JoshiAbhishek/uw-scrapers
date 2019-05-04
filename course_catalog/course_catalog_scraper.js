@@ -6,26 +6,18 @@ const COURSE_CATALOG_URL = "http://www.washington.edu/students/crscat";
 
 /**
  * 
- * @param {*} page 
+ * @param {Object} page - The current Puppeteer page instance
+ * @returns {String[]}
  */
-async function scrapeCourseCatalog(page) {
+async function scrapeCourseCatalogMajorLinks(page) {
 
 }
 
 /**
  * 
- * @param {*} page 
- * @param {*} url 
- */
-async function scrapeMajorCourses(page, url) {
-    await page.goto(url);
-
-}
-
-/**
- * 
- * @param {*} page 
- * @param {*} course 
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {Object} course 
+ * @returns {Object}
  */
 async function scrapeMajorHeaderInfo(page, course) {
     var title = await page.evaluate((sel) => {
@@ -53,9 +45,10 @@ async function scrapeMajorHeaderInfo(page, course) {
 
 /**
  * 
- * @param {*} page 
- * @param {*} url 
- * @param {*} course 
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} url 
+ * @param {Object} course 
+ * @returns {Object}
  */
 async function scrapeCatalogInfoForCourse(page, url, course) {
     await page.goto(url);
@@ -95,8 +88,37 @@ async function scrapeCatalogInfoForCourse(page, url, course) {
 
 /**
  * 
- * @param {*} page 
- * @param {*} exportFunction 
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} url 
+ * @returns {Object[]}
+ */
+async function scrapeMajorCourses(page, url) {
+    await page.goto(url);
+
+}
+
+/**
+ * 
+ * @param {Object} page - The current Puppeteer page instance
+ * @returns {Object[]}
+ */
+async function scrapeCourseCatalog(page) {
+
+}
+
+/**
+ * 
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {Function} exportFunction - The exportFunction to callback with file name and data
+ */
+async function exportCourseCatalogByMajor(page, exportFunction) {
+
+}
+
+/**
+ * 
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {Function} exportFunction - The exportFunction to callback with data
  */
 async function exportCourseCatalog(page, exportFunction) {
     var courses = await scrapeCourseCatalog(page);
@@ -106,9 +128,9 @@ async function exportCourseCatalog(page, exportFunction) {
 
 /**
  * 
- * @param {*} page 
- * @param {*} url 
- * @param {*} exportFunction 
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} url 
+ * @param {Function} exportFunction - The exportFunction to callback with data
  */
 async function exportMajorCourses(page, url, exportFunction) {
     var courses = await scrapeMajorCourses(page, url);

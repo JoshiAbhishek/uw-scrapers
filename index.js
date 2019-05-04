@@ -32,9 +32,11 @@ const DATA_EXPORT_BASE_URL = "./data/";
         */
 
         // Scrape and export time schedule information by major for a quarter
+        /*
         await TimeScheduleScraper.exportCoursesByMajorAndQuarter(mainPage, "SPR2019", function(file_name, data) {
             ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "SPR2019/", file_name, "data", data);
         });
+        */
 
         browser.close();
     } catch (error) {

@@ -1,6 +1,6 @@
 "use strict";
 
-//
+// Enum for converting days of the week as names to corresponding numbers (starting at 1 for Monday)
 var DaysToNumsEnum = Object.freeze({
     "Monday": 1,
     "Tuesday": 2,
@@ -11,7 +11,7 @@ var DaysToNumsEnum = Object.freeze({
     "Sunday": 7
 });
 
-//
+// Enum for converting days of the week as numbers to their corresponding name (strating at Monday for 1)
 var NumsToDaysEnum = Object.freeze({
     1: "Monday",
     2: "Tuesday",
@@ -22,7 +22,7 @@ var NumsToDaysEnum = Object.freeze({
     7: "Sunday"
 });
 
-//
+// Enum for converting lowercase string abbreviations of days of the week to their corresponding full name
 var DayExpressionsToDay = Object.freeze({
     "m": "Monday",
     "mo": "Monday",
@@ -53,8 +53,9 @@ var DayExpressionsToDay = Object.freeze({
 });
 
 /**
- * 
- * @param {*} hours 
+ * Parses a string representation of a UW building's hours from the UW Facilities Building portal
+ * @param {String} hours - The string representation of a UW building's hours
+ * @returns {Object} - An object representing the hours of a UW building's hours for each day of the week 
  */
 function getBuildingHours(hours) {
     if(hours === undefined || hours == "") {
@@ -299,8 +300,9 @@ function getBuildingHours(hours) {
 }
 
 /**
- * 
- * @param {*} day 
+ * Returns the full name of a day of the week from an abbreviation
+ * @param {String} day - An abbreviation of the name of a day of the week
+ * @returns {String} - The full name of a day of the week
  */
 function getDay(day) {
     return DayExpressionsToDay[day.toLowerCase()];

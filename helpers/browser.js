@@ -1,20 +1,20 @@
 "use strict";
 
-//
-const USERNAME_SELECTOR = '#weblogin_netid';
-
-//
-const PASSWORD_SELECTOR = '#weblogin_password';
-
-//
-const BUTTON_SELECTOR = '#submit_button';
-
 const CREDS = require('../creds');
 
+// Selector for the username input of the UW NetID login page
+const USERNAME_SELECTOR = '#weblogin_netid';
+
+// Selector for the password input of the UW NetID login page
+const PASSWORD_SELECTOR = '#weblogin_password';
+
+// Selector for the submit button of the UW NetID login page
+const BUTTON_SELECTOR = '#submit_button';
+
 /**
- * 
- * @param {*} page 
- * @param {*} url 
+ * Navigates to a url after logging in with stored UW NetID credentials if required
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} url - The url to navigate to with a check for a UW NetID login requirement
  */
 async function navigateWithLoginCheck(page, url) {
     var response = await page.goto(url);
