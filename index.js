@@ -19,22 +19,29 @@ const DATA_EXPORT_BASE_URL = "./data/";
         mainPage.setDefaultTimeout(1200000);
 
         // Logs any console output from the Puppeteer page instance
-        mainPage.on('console', consoleObj => console.log(consoleObj.text()));
+        //mainPage.on('console', consoleObj => console.log(consoleObj.text()));
 
         // Expose the extractCourseInfo function for use in the Puppeteer page instance
         await mainPage.exposeFunction("extractCourseInfo", TimeScheduleScraper.extractCourseInfo);
 
-        // Scrape and export building information
+        // Scrape and export UW Facilities building information
         /*
         await BuildingInfoScraper.exportBuildingInfo(mainPage, false, function(data) {
             ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL, "detailed_building_info.json", "data", data);
         });
         */
-
-        // Scrape and export time schedule information by major for a quarter
+        
+        // Scrape and export UW Time Schedule information by major for a quarter
         /*
         await TimeScheduleScraper.exportCoursesByMajorAndQuarter(mainPage, "SPR2019", function(file_name, data) {
             ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "SPR2019/", file_name, "data", data);
+        });
+        */
+
+        // Scrape and export UW Course Catalog information by major
+        /*
+        await CourseCatalogScraper.exportCourseCatalogByMajor(mainPage, function(file_name, data) {
+            ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "Catalog/", file_name, "data", data);
         });
         */
 

@@ -3,7 +3,7 @@
 const FS = require('fs');
 
 /**
- * 
+ * Forms the final URL to export data to
  * @param {String} dataDirectory - The file directory to export data to
  * @param {String} fileName - The name of the file to be exported
  * @param {Object} data - The data to be exported
@@ -32,7 +32,7 @@ function exportFoundation(dataDirectory, fileName, data) {
 }
 
 /**
- * 
+ * Exports an object to the file system as a JSON file
  * @param {String} dataDirectory - The file directory to export data to
  * @param {String} fileName - The name of the file to be exported
  * @param {Object} data - The data to be exported
@@ -46,7 +46,7 @@ function exportJSONObject(dataDirectory, fileName, data) {
 }
 
 /**
- * 
+ * Exports an array of objects to the file system as a JSON file
  * @param {String} dataDirectory - The file directory to export data to
  * @param {String} fileName - The name of the file to be exported
  * @param {String} propertyName - The name of the property the exported data will be assigned to
@@ -61,7 +61,7 @@ function exportJSONArray(dataDirectory, fileName, propertyName, data) {
 }
 
 /**
- * 
+ * Exports an array to the file system as a CSV file
  * @param {String} dataDirectory - The file directory to export data to
  * @param {String} fileName - The name of the file to be exported
  * @param {String[]} headersArray - The headers corresponding to the data's properties
@@ -71,6 +71,7 @@ function exportJSONArrayToCSV(dataDirectory, fileName, headersArray, data) {
     var url = exportFoundation(dataDirectory, fileName, data);
     if (url == null) { return; }
 
+    
 }
 
 module.exports = {
