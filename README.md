@@ -47,7 +47,7 @@ await CourseCatalogScraper.exportCourseCatalogByMajor(mainPage, function(file_na
 - [x] Building Info Scraper
 - [x] Course Catalog Scraper
 - [x] Time Schedule Scraper
-- [ ] Export to CSV, Scrape and export data as maps
+- [ ] Export to CSV, Export data as property maps
 - [ ] Course Evaluations Catalog Scraper
 - [ ] Major Information Scraper
 
