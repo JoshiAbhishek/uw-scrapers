@@ -4,6 +4,9 @@ creds.js
 # Data directory
 data/
 
+# VS Code launch directory
+.vscode/
+
 # Logs
 logs
 *.log
