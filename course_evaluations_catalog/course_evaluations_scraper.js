@@ -34,7 +34,7 @@ async function scrapeCECTableOfContentsLinks(page) {
 
     var pageLinks = await page.evaluate((sel) => {
         return [...document.querySelectorAll(sel)].reduce(function (result, elem) {
-            if (elem.href != null && elem.getAttribute("href") != null && !elem.getAttribute("href").startswith("/cec/")) {
+            if (elem.href != null && elem.getAttribute("href") != null && !elem.getAttribute("href").startsWith("/cec/")) {
                 result.push(elem.href.trim());
             }
 
@@ -50,7 +50,7 @@ async function scrapeCECCoursePageLinks(page, url) {
 
     var pageLinks = await page.evaluate((sel) => {
         return [...document.querySelectorAll(sel)].reduce(function (result, elem) {
-            if (elem.href != null && elem.getAttribute("href") != null && !elem.getAttribute("href").startswith("/cec/")) {
+            if (elem.href != null && elem.getAttribute("href") != null && !elem.getAttribute("href").startsWith("/cec/")) {
                 result.push(elem.href.trim());
             }
 
@@ -146,10 +146,11 @@ async function exportCourseEvaluationsCatalog(page, exportFunction) {
 
 }
 
-module.export = {
+module.exports = {
     scrapeCECTableOfContentsLinks,
     scrapeCECCoursePageLinks,
     scrapeCECCoursePage,
     scrapeCourseEvaluationsCatalog,
-    exportCourseEvaluationsCatalog
+    exportCourseEvaluationsCatalog,
+    exportCourseEvaluationsCatalogByMajor
 };

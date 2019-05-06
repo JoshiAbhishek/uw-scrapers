@@ -17,7 +17,7 @@ const BUTTON_SELECTOR = '#submit_button';
  * @param {String} url - The url to navigate to with a check for a UW NetID login requirement
  */
 async function navigateWithLoginCheck(page, url) {
-    var response = await page.goto(url);
+    var response = await page.goto(url, {waitUntil: 'networkidle0'});
     var chain = response.request().redirectChain();
 
     if (chain.length > 0) {
@@ -28,9 +28,10 @@ async function navigateWithLoginCheck(page, url) {
             await page.click(PASSWORD_SELECTOR);
             await page.keyboard.type(CREDS.password);
 
-            await page.click(BUTTON_SELECTOR);
-
-            await page.waitForNavigation();
+            await Promise.all([
+                page.click(BUTTON_SELECTOR),
+                page.waitForNavigation( { 'waitUntil' : 'networkidle0' } )
+            ]);
         }
     }
 }

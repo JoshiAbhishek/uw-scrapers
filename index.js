@@ -46,9 +46,9 @@ const DATA_EXPORT_BASE_URL = "./data/";
         });
         */
 
-       var t = await CourseEvaluationsCatalogScraper.scrapeCECTableOfContentsLinks(mainPage);
+        var t = await CourseEvaluationsCatalogScraper.scrapeCECTableOfContentsLinks(mainPage);
 
-       console.log(t);
+        console.log(t);
 
         browser.close();
     } catch (error) {
