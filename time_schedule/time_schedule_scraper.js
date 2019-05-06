@@ -95,8 +95,8 @@ function extractCourseInfo(str, course) {
     var courseDetails = COURSE_REGEX.exec(courseInfoGroups[0]);
 
     if (courseDetails != null && courseDetails != "") {
-        course["sln"] = courseDetails[1];
-        course["section"] = courseDetails[2];
+        course["sln"] = checkRegexGroup(courseDetails[1]);
+        course["section"] = checkRegexGroup(courseDetails[2]);
         course["credits"] = checkRegexGroup(courseDetails[3]);
         course["type"] = checkRegexGroup(courseDetails[4]);
 
@@ -407,7 +407,7 @@ async function scrapeCoursesForMajor(page, url, courses, includeCatalogInfo) {
 async function scrapeMajorLinksByQuarter(page, quarter) {
     await page.goto(TIME_SCHEDULE_URL + quarter);
 
-    var major_links = await page.evaluate((sel) => {
+    var majorLinks = await page.evaluate((sel) => {
         return [...document.querySelectorAll(sel)].reduce(function (result, elem) {
             if (elem.href != null && elem.getAttribute("href") != null && elem.getAttribute("href").charAt(0) != "#") {
                 result.push(elem.href.trim());
@@ -417,7 +417,7 @@ async function scrapeMajorLinksByQuarter(page, quarter) {
         }, []);
     }, MAJOR_LINK);
 
-    return major_links;
+    return majorLinks;
 }
 
 /**
@@ -429,20 +429,20 @@ async function scrapeMajorLinksByQuarter(page, quarter) {
 async function scrapeAllCoursesByQuarter(page, quarter) {
     console.log("> Scraping UW Time Schedule Major Links");
 
-    var major_links = await scrapeMajorLinksByQuarter(page, quarter);
+    var majorLinks = await scrapeMajorLinksByQuarter(page, quarter);
 
     console.log("> Scraping UW Time Schedule Course Information");
 
     var bar = new ProgressBar(':bar :current/:total', {
-        total: major_links.length
+        total: majorLinks.length
     });
 
     var courses = [];
 
-    for (let i = 0; i < major_links; i++) {
+    for (let i = 0; i < majorLinks; i++) {
         bar.tick();
 
-        courses = await scrapeCoursesForMajor(page, major_links[i], courses);
+        courses = await scrapeCoursesForMajor(page, majorLinks[i], courses);
     }
 
     return courses;
@@ -457,23 +457,23 @@ async function scrapeAllCoursesByQuarter(page, quarter) {
 async function exportCoursesByMajorAndQuarter(page, quarter, exportFunction) {
     console.log("> Scraping UW Time Schedule Major Links");
 
-    var major_links = await scrapeMajorLinksByQuarter(page, quarter);
+    var majorLinks = await scrapeMajorLinksByQuarter(page, quarter);
 
     console.log("> Scraping UW Time Schedule Course Information");
 
     var bar = new ProgressBar(':bar :current/:total', {
-        total: major_links.length
+        total: majorLinks.length
     });
 
-    for (let i = 0; i < major_links.length; i++) {
+    for (let i = 0; i < majorLinks.length; i++) {
         bar.tick();
 
-        var courses = await scrapeCoursesForMajor(page, major_links[i], []);
+        var courses = await scrapeCoursesForMajor(page, majorLinks[i], []);
 
-        var link = major_links[i].match(/.*\/([\w\W]+\.html)/);
+        var link = majorLinks[i].match(/.*\/([\w\W]+\.html)/);
 
         if(link == null || checkRegexGroup(link[1]) == "") {
-            console.log(">> Could not parse major link: " + major_links[i]);
+            console.log(">> Could not parse major link: " + majorLinks[i]);
         }
         else {
             exportFunction(link[1].replace(".html", "") + ".json", courses);
@@ -512,9 +512,9 @@ async function exportCoursesForMajor(page, url, exportFunction) {
  * @param {Function} exportFunction - The exportFunction to callback with data
  */
 async function exportMajorLinksByQuarter(page, quarter, exportFunction) {
-    var major_links = await scrapeMajorLinksByQuarter(page, quarter);
+    var majorLinks = await scrapeMajorLinksByQuarter(page, quarter);
 
-    exportFunction(major_links);
+    exportFunction(majorLinks);
 }
 
 module.exports = {
