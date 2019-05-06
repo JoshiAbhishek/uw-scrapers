@@ -7,7 +7,7 @@ const COURSE_CATALOG_URL = "http://www.washington.edu/students/crscat";
 // Selector for links to courses offered by a major on its course catalog page
 const MAJOR_LINK = "#uw-container-inner > div.container > div.row ul > li > a";
 
-//
+// Selector for course information 
 const COURSE_INFORMATION = "body > p > a[name]";
 
 /*
@@ -38,9 +38,9 @@ Array.prototype.extend = function (other) {
 }
 
 /**
- * 
+ * Scrapes links for major's course catalog pages of a quarter
  * @param {Object} page - The current Puppeteer page instance
- * @returns {String[]}
+ * @returns {String[]} - The scraped links for majors' course catalog pages
  */
 async function scrapeCourseCatalogMajorLinks(page) {
     await page.goto(COURSE_CATALOG_URL);
@@ -59,10 +59,10 @@ async function scrapeCourseCatalogMajorLinks(page) {
 }
 
 /**
- * 
+ * Scrapes college, department, and program information for a major's course offerings
  * @param {Object} page - The current Puppeteer page instance
- * @param {Object} course 
- * @returns {Object}
+ * @param {Object} course - A scraped course object
+ * @returns {Object} - The course object complete with college, department, and program information
  */
 async function scrapeMajorHeaderInfo(page, course) {
     if (course === undefined || course == null) {
@@ -93,11 +93,11 @@ async function scrapeMajorHeaderInfo(page, course) {
 }
 
 /**
- * 
+ * Scrapes UW Course Catalog information for a course
  * @param {Object} page - The current Puppeteer page instance
- * @param {String} url 
- * @param {Object} course 
- * @returns {Object}
+ * @param {String} url - The URL targeting a course in the UW Course Catalog
+ * @param {Object} course - A scraped course object 
+ * @returns {Object} - The course object complete with course catalog information
  */
 async function scrapeCatalogInfoForCourse(page, url, course) {
     await page.goto(url);
@@ -136,10 +136,10 @@ async function scrapeCatalogInfoForCourse(page, url, course) {
 }
 
 /**
- * 
+ * Scrapes course catalog information for a major
  * @param {Object} page - The current Puppeteer page instance
- * @param {String} url 
- * @returns {Object[]}
+ * @param {String} url - The URL for a major's course catalog page
+ * @returns {Object[]} - An array of scraped course objects
  */
 async function scrapeCoursesForMajor(page, url) {
     await page.goto(url);
@@ -148,9 +148,9 @@ async function scrapeCoursesForMajor(page, url) {
 
     var courses = await page.evaluate((sel, courseBase, regexSource, regexFlags) => {
         /**
-         * Checks a string for being defined and relevant (not equal to "to be arranged" or composed entirely of stars and spaces)
+         * Checks a string for being defined 
          * @param {String} str - String captured by a course regex
-         * @returns {String} - An empty string if the passed string is not valid, or the passed string with no surrounding whitespaces 
+         * @returns {String} - An empty string if the passed string is not valid, or the passed string with no extra whitespaces 
          */
         var checkRegex = function (str) {
             return (str === undefined || str == null || str == " " ? "" : str.replace(/\s\s+/, " ").trim());
@@ -173,7 +173,7 @@ async function scrapeCoursesForMajor(page, url) {
             else {
                 course["description"] = elem.innerText.trim();
             }
-            
+
             var prereqArr = elem.innerText.match(/Prerequisite:\s*([\w\W\s&\d]+?(?=\.\s|\.$))/);
             if (prereqArr != null && prereqArr.length > 0) {
                 course["prerequisites"] = prereqArr[1].replace("and ", "").split("; ");
@@ -190,9 +190,9 @@ async function scrapeCoursesForMajor(page, url) {
 }
 
 /**
- * 
+ * Scrapes all course information from the UW Course Catalog
  * @param {Object} page - The current Puppeteer page instance
- * @returns {Object[]}
+ * @returns {Object[]} - An array of scraped course objects
  */
 async function scrapeCourseCatalog(page) {
     console.log("> Scraping UW Course Catalog Major Links");
@@ -219,7 +219,7 @@ async function scrapeCourseCatalog(page) {
 }
 
 /**
- * 
+ * Scrapes and exports course catalog information by major
  * @param {Object} page - The current Puppeteer page instance
  * @param {Function} exportFunction - The exportFunction to callback with file name and data
  */
@@ -251,7 +251,7 @@ async function exportCourseCatalogByMajor(page, exportFunction) {
 }
 
 /**
- * 
+ * Scrapes and exports all course catalog information
  * @param {Object} page - The current Puppeteer page instance
  * @param {Function} exportFunction - The exportFunction to callback with data
  */
@@ -262,9 +262,9 @@ async function exportCourseCatalog(page, exportFunction) {
 }
 
 /**
- * 
+ * Scrapes and exports course catalog information for a major
  * @param {Object} page - The current Puppeteer page instance
- * @param {String} url 
+ * @param {String} url - The URL of a major's course catalog page
  * @param {Function} exportFunction - The exportFunction to callback with data
  */
 async function exportMajorCourses(page, url, exportFunction) {
