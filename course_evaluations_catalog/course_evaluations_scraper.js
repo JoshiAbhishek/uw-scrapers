@@ -5,7 +5,7 @@ const BrowserUtils = require("../helpers/browser.js");
 
 const COURSE_EVALUATIONS_CATALOG_URL = "https://www.washington.edu/cec/toc.html";
 
-//
+// 
 const CEC_TOC_LINKS = "body > a";
 
 //
@@ -194,7 +194,7 @@ async function exportCourseEvaluationsCatalogByMajor(page, exportFunction) {
     var bar = new ProgressBar(':bar :current/:total', {
         total: cecTOCLinks.length
     });
-    
+
     for (let i = 0; i < cecTOCLinks.length; i++) {
         bar.tick();
 

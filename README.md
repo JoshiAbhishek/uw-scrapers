@@ -19,6 +19,20 @@
 **Majors Information**
 //
 
+## Installation
+
+**Install Node Modules**
+
+**Create creds.js File**
+
+```javascript
+var username = '';
+var password = '';
+
+exports.username = username;
+exports.password = password;
+```
+
 ## Examples
 
 
@@ -38,6 +52,11 @@ await TimeScheduleScraper.exportCoursesByMajorAndQuarter(mainPage, "SPR2019", fu
 await CourseCatalogScraper.exportCourseCatalogByMajor(mainPage, function(file_name, data) {
     ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "Catalog/", file_name, "data", data);
 });
+
+// Scrape and export UW Course Evaluations Catalog information by major
+await CourseEvaluationsCatalogScraper.exportCourseEvaluationsCatalogByMajor(mainPage, function(file_name, data) {
+    ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "CEC/", file_name, "data", data);
+});
 ```
 
 ## Usage, Issues, and Future Development
@@ -48,7 +67,7 @@ await CourseCatalogScraper.exportCourseCatalogByMajor(mainPage, function(file_na
 - [x] Course Catalog Scraper
 - [x] Time Schedule Scraper
 - [ ] Export to CSV, Export data as property maps
-- [ ] Course Evaluations Catalog Scraper
+- [x] Course Evaluations Catalog Scraper
 - [ ] Major Information Scraper
 
 ## Terms

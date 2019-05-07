@@ -46,6 +46,7 @@ const DATA_EXPORT_BASE_URL = "./data/";
         });
         */
 
+        // Scrape and export UW Course Evaluations Catalog information by major
         await CourseEvaluationsCatalogScraper.exportCourseEvaluationsCatalogByMajor(mainPage, function(file_name, data) {
             ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "CEC/", file_name, "data", data);
         });
