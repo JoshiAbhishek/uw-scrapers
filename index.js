@@ -13,7 +13,7 @@ const DATA_EXPORT_BASE_URL = "./data/";
 (async function main() {
     try {
         const browser = await Puppeteer.launch({
-            headless: false
+            headless: true
         });
 
         const mainPage = await browser.newPage();
@@ -46,9 +46,9 @@ const DATA_EXPORT_BASE_URL = "./data/";
         });
         */
 
-        var t = await CourseEvaluationsCatalogScraper.scrapeCECTableOfContentsLinks(mainPage);
-
-        console.log(t);
+        await CourseEvaluationsCatalogScraper.exportCourseEvaluationsCatalogByMajor(mainPage, function(file_name, data) {
+            ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "CEC/", file_name, "data", data);
+        });
 
         browser.close();
     } catch (error) {
