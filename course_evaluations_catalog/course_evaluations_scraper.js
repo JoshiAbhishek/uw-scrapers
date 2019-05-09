@@ -5,20 +5,37 @@ const BrowserUtils = require("../helpers/browser.js");
 
 const COURSE_EVALUATIONS_CATALOG_URL = "https://www.washington.edu/cec/toc.html";
 
-// 
+// Selector for CEC table of contents page links
 const CEC_TOC_LINKS = "body > a";
 
-//
+// Selector for CEC course evaluation page links
 const CEC_PAGE_LINKS = "body > a";
 
-//
+// Selector for CEC course evaluation page tables
 const CEC_TABLE = "body > table";
 
-//
+/*
+CEC page link text regex array results (by index):
+
+0 - Original string
+1 - title
+2 - alias
+3 - section
+4 - instructor
+5 - role
+6 - quarter
+*/
 const CEC_PAGE_LINK_INFO_REGEX = /([\w\W\s&]+?(?=\s[A-Z]+\s))\s([A-Z]\s[A-Z]\s\d+|[A-Z]+\s\d+)\s([A-Z\d]+)\s{2,}([A-Za-z\s\,\.\'\-]+)\s{2,}([A-za-z\s\-\.]+)\s{2,}([A-Z]+\d+)/;
 
-//
+// Regex for matching a course's lecture type, surveyed students, and enrolled students
 const CEC_COURSE_TABLE_CAPTION_REGEX = new RegExp(/[A-Za-z\s]+\:([A-Za-z\s\-\/]+)\s{2,}\"(\d+)\"[a-z\s]+\"(\d+)\"[a-z\s]+/);
+
+// Adds an extend method to the base Array object for adding the contents of another array to the end of the current array
+Array.prototype.extend = function (other) {
+    other.forEach(function (v) {
+        this.push(v)
+    }, this);
+}
 
 /**
  * Checks a string for being defined 
@@ -30,8 +47,9 @@ function checkRegexGroup(str) {
 }
 
 /**
- * 
- * @param {*} page 
+ * Scrapes links for CEC table of contents pages
+ * @param {Object} page - The current Puppeteer page instance
+ * @returns {String[]} - The scraped links for CEC table of contents pages
  */
 async function scrapeCECTableOfContentsLinks(page) {
     await BrowserUtils.navigateWithLoginCheck(page, COURSE_EVALUATIONS_CATALOG_URL);
@@ -50,9 +68,10 @@ async function scrapeCECTableOfContentsLinks(page) {
 }
 
 /**
- * 
- * @param {*} page 
- * @param {*} url 
+ * Scrapes links for CEC course evaluations pages
+ * @param {*} page - The current Puppeteer page instance
+ * @param {*} url - The URL for a CEC table of contents page to scrape
+ * @returns {Object[]} - The scraped links and their link text for course evaluations pages
  */
 async function scrapeCECCoursePageLinks(page, url) {
     await BrowserUtils.navigateWithLoginCheck(page, url);
@@ -74,10 +93,11 @@ async function scrapeCECCoursePageLinks(page, url) {
 }
 
 /**
- * 
- * @param {*} page 
- * @param {*} url 
- * @param {*} linkText 
+ * Scrapes a course's evaluation
+ * @param {*} page - The current Puppeteer page instance
+ * @param {*} url - The URL of a CEC course evaluations page
+ * @param {*} linkText - The CEC table of contents link's text with course information
+ * @returns {Object} - A JavaScript Object representing a course evaluation
  */
 async function scrapeCECCoursePage(page, url, linkText) {
     await BrowserUtils.navigateWithLoginCheck(page, url);
@@ -148,41 +168,47 @@ async function scrapeCECCoursePage(page, url, linkText) {
 }
 
 /**
- * 
- * @param {*} page 
+ * Scrapes UW course evaluations for the past year
+ * @param {*} page - The current Puppeteer page instance
+ * @returns {Object[]} - An array of the scraped course evaluations
  */
 async function scrapeCourseEvaluationsCatalog(page) {
     console.log("> Scraping UW Course Catalog Links");
 
     var cecTOCLinks = await scrapeCECTableOfContentsLinks(page);
 
-    var courses = [];
+    var coursePageLinks = [];
+
+    for (let i = 0; i < cecTOCLinks.length; i++) {
+        var links = await scrapeCECCoursePageLinks(page, cecTOCLinks[i]);
+
+        coursePageLinks.extend(links);
+    }
 
     console.log("> Scraping UW Course Catalog Information");
 
+    var courses = [];
+
     var bar = new ProgressBar(':bar :current/:total', {
-        total: cecTOCLinks.length
+        total: coursePageLinks.length
     });
 
-    for (let i = 0; i < cecTOCLinks.length; i++) {
+    for (let j = 0; j < coursePageLinks.length; j++) {
         bar.tick();
 
-        var coursePageLinks = await scrapeCECCoursePageLinks(page, cecTOCLinks[i]);
+        var course = await scrapeCECCoursePage(page, coursePageLinks[j]["link"], coursePageLinks[j]["text"]);
 
-        for (let j = 0; j < coursePageLinks.length; j++) {
-            var course = await scrapeCECCoursePage(page, coursePageLinks[j]["link"], coursePageLinks[j]["text"]);
-
-            courses.push(course);
-        }
+        courses.push(course);
     }
 
     return courses;
 }
 
 /**
- * 
- * @param {*} page 
- * @param {*} url 
+ * Scrapes course evaluations for the current table contents page
+ * @param {*} page - The current Puppeteer page instance
+ * @param {*} url - The URL for a CEC table of contents page to scrape
+ * @returns {Map<String, Object[]>} - A map of course alias to an array of course evaluations objects
  */
 async function scrapeCourseEvaluationsCatalogContentsPage(page, url) {
     var coursePageLinks = await scrapeCECCoursePageLinks(page, url);
@@ -224,9 +250,9 @@ async function scrapeCourseEvaluationsCatalogContentsPage(page, url) {
 }
 
 /**
- * 
- * @param {*} page 
- * @param {*} exportFunction 
+ * Scrapes and exports course evaluations by major program
+ * @param {*} page - The current Puppeteer page instance
+ * @param {*} exportFunction - The exportFunction to callback with a file name and data
  */
 async function exportCourseEvaluationsCatalogByMajor(page, exportFunction) {
     console.log("> Scraping UW Course Catalog Links");
@@ -248,9 +274,9 @@ async function exportCourseEvaluationsCatalogByMajor(page, exportFunction) {
 }
 
 /**
- * 
- * @param {*} page 
- * @param {*} exportFunction 
+ * Scrapes and exports course evaluations for all courses
+ * @param {*} page - The current Puppeteer page instance
+ * @param {*} exportFunction - The exportFunction to callback with data
  */
 async function exportCourseEvaluationsCatalog(page, exportFunction) {
     var courses = await scrapeCourseEvaluationsCatalog(page);
