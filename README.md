@@ -27,7 +27,8 @@
 npm install
 ```
 
-**Create data/ directory**
+**Create data/ directory**  
+Create any other data directories
 
 **Create creds.js File**
 
@@ -39,7 +40,7 @@ exports.username = username;
 exports.password = password;
 ```
 
-**Run index.js**
+**Run index.js**  
 Add calls to scrapers 
 
 ```javascript
