@@ -2,22 +2,22 @@
 
 ## Overview
 
+**uw-scrapers** is 
 
-
-**Building Information**
+**Building Information**  
 //
 
-**Course Catalog**
+**Course Catalog**  
 //
 
-**Time Schedule**
+**Time Schedule**  
 //
 
-**Course Evaluations Catalog**
+**Course Evaluations Catalog**  
 //
 
-**Majors Information**
-//
+**Majors Information**  
+* In Development
 
 ## Installation
 
@@ -28,7 +28,7 @@ npm install
 ```
 
 **Create data/ directory**  
-Create any other data directories
+* Create any other data directories
 
 **Create creds.js File**
 
@@ -41,15 +41,13 @@ exports.password = password;
 ```
 
 **Run index.js**  
-Add calls to scrapers 
+* Add calls to scrapers 
 
 ```javascript
 node index.js
 ```
 
 ## Examples
-
-
 
 ```javascript
 // Scrape and export UW Facilities building information
