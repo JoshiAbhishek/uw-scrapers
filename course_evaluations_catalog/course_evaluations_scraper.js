@@ -182,6 +182,50 @@ async function scrapeCourseEvaluationsCatalog(page) {
 /**
  * 
  * @param {*} page 
+ * @param {*} url 
+ */
+async function scrapeCourseEvaluationsCatalogContentsPage(page, url) {
+    var coursePageLinks = await scrapeCECCoursePageLinks(page, url);
+
+    var majorMap = new Map();
+
+    var bar = new ProgressBar(':bar :current/:total', {
+        total: coursePageLinks.length
+    });
+
+    for (let j = 0; j < coursePageLinks.length; j++) {
+        bar.tick();
+
+        var course = await scrapeCECCoursePage(page, coursePageLinks[j]["link"], coursePageLinks[j]["text"]);
+
+        var majorKey = checkRegexGroup(course["alias"].replace(/[0-9]/g, "").toLowerCase().trim());
+
+        //
+        if (majorKey != "") {
+            var majorValue = majorMap.get(majorKey);
+
+            if (majorValue == undefined) {
+                majorValue = [];
+            }
+
+            majorValue.push(course);
+            majorMap.set(majorKey, majorValue);
+        }
+        else {
+            console.log(">> Could not read alias for course: ");
+            console.log("");
+            console.log(course);
+            console.log("<<");
+            console.log("");
+        }
+    }
+
+    return majorMap;
+}
+
+/**
+ * 
+ * @param {*} page 
  * @param {*} exportFunction 
  */
 async function exportCourseEvaluationsCatalogByMajor(page, exportFunction) {
@@ -191,45 +235,14 @@ async function exportCourseEvaluationsCatalogByMajor(page, exportFunction) {
 
     console.log("> Scraping UW Course Catalog Information");
 
-    var bar = new ProgressBar(':bar :current/:total', {
-        total: cecTOCLinks.length
-    });
-
     for (let i = 0; i < cecTOCLinks.length; i++) {
-        bar.tick();
+        console.log("Scraping CEC Table of Contents Page " + i + 1 + " / " + cecTOCLinks.length);
 
-        var coursePageLinks = await scrapeCECCoursePageLinks(page, cecTOCLinks[i]);
-
-        var majorMap = new Map();
-
-        for (let j = 0; j < coursePageLinks.length; j++) {
-            var course = await scrapeCECCoursePage(page, coursePageLinks[j]["link"], coursePageLinks[j]["text"]);
-
-            var majorKey = checkRegexGroup(course["alias"].replace(/[0-9]/g, "").toLowerCase().trim());
-
-            //
-            if (majorKey != "") {
-                var majorValue = majorMap.get(majorKey);
-
-                if (majorValue == undefined) {
-                    majorValue = [];
-                }
-
-                majorValue.push(course);
-                majorMap.set(majorKey, majorValue);
-            }
-            else {
-                console.log(">> Could not read alias for course: ");
-                console.log("");
-                console.log(course);
-                console.log("<<");
-                console.log("");
-            }
-        }
+        var courseEvaluationsMap = await scrapeCourseEvaluationsCatalogContentsPage(page, cecTOCLinks[i]);
 
         // Export by major
-        for (var key of myMap.keys()) {
-            exportFunction(key + ".json", myMap.get(key));
+        for (var key of courseEvaluationsMap.keys()) {
+            exportFunction(key + ".json", courseEvaluationsMap.get(key));
         }
     }
 }
@@ -248,6 +261,7 @@ async function exportCourseEvaluationsCatalog(page, exportFunction) {
 module.exports = {
     scrapeCECTableOfContentsLinks,
     scrapeCECCoursePageLinks,
+    scrapeCourseEvaluationsCatalogContentsPage,
     scrapeCECCoursePage,
     scrapeCourseEvaluationsCatalog,
     exportCourseEvaluationsCatalog,
