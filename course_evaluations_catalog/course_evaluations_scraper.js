@@ -69,8 +69,8 @@ async function scrapeCECTableOfContentsLinks(page) {
 
 /**
  * Scrapes links for CEC course evaluations pages
- * @param {*} page - The current Puppeteer page instance
- * @param {*} url - The URL for a CEC table of contents page to scrape
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} url - The URL for a CEC table of contents page to scrape
  * @returns {Object[]} - The scraped links and their link text for course evaluations pages
  */
 async function scrapeCECCoursePageLinks(page, url) {
@@ -94,9 +94,9 @@ async function scrapeCECCoursePageLinks(page, url) {
 
 /**
  * Scrapes a course's evaluation
- * @param {*} page - The current Puppeteer page instance
- * @param {*} url - The URL of a CEC course evaluations page
- * @param {*} linkText - The CEC table of contents link's text with course information
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} url - The URL of a CEC course evaluations page
+ * @param {String} linkText - The CEC table of contents link's text with course information
  * @returns {Object} - A JavaScript Object representing a course evaluation
  */
 async function scrapeCECCoursePage(page, url, linkText) {
@@ -169,7 +169,7 @@ async function scrapeCECCoursePage(page, url, linkText) {
 
 /**
  * Scrapes UW course evaluations for the past year
- * @param {*} page - The current Puppeteer page instance
+ * @param {Object} page - The current Puppeteer page instance
  * @returns {Object[]} - An array of the scraped course evaluations
  */
 async function scrapeCourseEvaluationsCatalog(page) {
@@ -206,8 +206,8 @@ async function scrapeCourseEvaluationsCatalog(page) {
 
 /**
  * Scrapes course evaluations for the current table contents page
- * @param {*} page - The current Puppeteer page instance
- * @param {*} url - The URL for a CEC table of contents page to scrape
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {String} url - The URL for a CEC table of contents page to scrape
  * @returns {Map<String, Object[]>} - A map of course alias to an array of course evaluations objects
  */
 async function scrapeCourseEvaluationsCatalogContentsPage(page, url) {
@@ -251,8 +251,8 @@ async function scrapeCourseEvaluationsCatalogContentsPage(page, url) {
 
 /**
  * Scrapes and exports course evaluations by major program
- * @param {*} page - The current Puppeteer page instance
- * @param {*} exportFunction - The exportFunction to callback with a file name and data
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {Function} exportFunction - The exportFunction to callback with a file name and data
  */
 async function exportCourseEvaluationsCatalogByMajor(page, exportFunction) {
     console.log("> Scraping UW Course Catalog Links");
@@ -275,8 +275,8 @@ async function exportCourseEvaluationsCatalogByMajor(page, exportFunction) {
 
 /**
  * Scrapes and exports course evaluations for all courses
- * @param {*} page - The current Puppeteer page instance
- * @param {*} exportFunction - The exportFunction to callback with data
+ * @param {Object} page - The current Puppeteer page instance
+ * @param {Function} exportFunction - The exportFunction to callback with data
  */
 async function exportCourseEvaluationsCatalog(page, exportFunction) {
     var courses = await scrapeCourseEvaluationsCatalog(page);

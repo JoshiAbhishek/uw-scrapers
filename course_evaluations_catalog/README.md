@@ -62,8 +62,8 @@ Scrapes links for CEC course evaluations pages
 
 | Param | Type | Description |
 | --- | --- | --- |
-| page | <code>\*</code> | The current Puppeteer page instance |
-| url | <code>\*</code> | The URL for a CEC table of contents page to scrape |
+| page | <code>Object</code> | The current Puppeteer page instance |
+| url | <code>String</code> | The URL for a CEC table of contents page to scrape |
 
 <a name="scrapeCECCoursePage"></a>
 
@@ -75,9 +75,9 @@ Scrapes a course's evaluation
 
 | Param | Type | Description |
 | --- | --- | --- |
-| page | <code>\*</code> | The current Puppeteer page instance |
-| url | <code>\*</code> | The URL of a CEC course evaluations page |
-| linkText | <code>\*</code> | The CEC table of contents link's text with course information |
+| page | <code>Object</code> | The current Puppeteer page instance |
+| url | <code>String</code> | The URL of a CEC course evaluations page |
+| linkText | <code>String</code> | The CEC table of contents link's text with course information |
 
 <a name="scrapeCourseEvaluationsCatalog"></a>
 
@@ -89,7 +89,7 @@ Scrapes UW course evaluations for the past year
 
 | Param | Type | Description |
 | --- | --- | --- |
-| page | <code>\*</code> | The current Puppeteer page instance |
+| page | <code>Object</code> | The current Puppeteer page instance |
 
 <a name="scrapeCourseEvaluationsCatalogContentsPage"></a>
 
@@ -102,8 +102,8 @@ objects
 
 | Param | Type | Description |
 | --- | --- | --- |
-| page | <code>\*</code> | The current Puppeteer page instance |
-| url | <code>\*</code> | The URL for a CEC table of contents page to scrape |
+| page | <code>Object</code> | The current Puppeteer page instance |
+| url | <code>String</code> | The URL for a CEC table of contents page to scrape |
 
 <a name="exportCourseEvaluationsCatalogByMajor"></a>
 
@@ -114,8 +114,8 @@ Scrapes and exports course evaluations by major program
 
 | Param | Type | Description |
 | --- | --- | --- |
-| page | <code>\*</code> | The current Puppeteer page instance |
-| exportFunction | <code>\*</code> | The exportFunction to callback with a file name and data |
+| page | <code>Object</code> | The current Puppeteer page instance |
+| exportFunction | <code>function</code> | The exportFunction to callback with a file name and data |
 
 <a name="exportCourseEvaluationsCatalog"></a>
 
@@ -126,5 +126,5 @@ Scrapes and exports course evaluations for all courses
 
 | Param | Type | Description |
 | --- | --- | --- |
-| page | <code>\*</code> | The current Puppeteer page instance |
-| exportFunction | <code>\*</code> | The exportFunction to callback with data |
+| page | <code>Object</code> | The current Puppeteer page instance |
+| exportFunction | <code>function</code> | The exportFunction to callback with data |
