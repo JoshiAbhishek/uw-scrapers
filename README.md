@@ -23,6 +23,12 @@
 
 **Install Node Modules**
 
+```javascript
+npm install
+```
+
+**Create data/ directory**
+
 **Create creds.js File**
 
 ```javascript
@@ -31,6 +37,13 @@ var password = '';
 
 exports.username = username;
 exports.password = password;
+```
+
+**Run index.js**
+Add calls to scrapers 
+
+```javascript
+node index.js
 ```
 
 ## Examples
@@ -66,8 +79,8 @@ await CourseEvaluationsCatalogScraper.exportCourseEvaluationsCatalogByMajor(main
 - [x] Building Info Scraper
 - [x] Course Catalog Scraper
 - [x] Time Schedule Scraper
-- [ ] Export to CSV, Export data as property maps
 - [x] Course Evaluations Catalog Scraper
+- [ ] Export to CSV, Export data as property maps
 - [ ] Major Information Scraper
 
 ## Terms
