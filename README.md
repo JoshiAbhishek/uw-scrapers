@@ -1,8 +1,8 @@
 # uw-scrapers
 
-## Overview
-
 **uw-scrapers** is a collection of Node.js scrapers for University of Washington catalogs, including building information, quarterly time schedules, course descriptions, and course evaluations. 
+
+## Scrapers
 
 **Building Information**  
 * Scrapes building information from the UW Facilities catalog, including building hours
