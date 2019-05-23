@@ -26,7 +26,9 @@ function exportFoundation(dataDirectory, fileName, data) {
 
     var url = dataDirectory + fileName;
 
-    console.log("> Exporting to " + url);
+    if(url != null) {
+        console.log("> Exporting to " + url);
+    }
 
     return url;
 }

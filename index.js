@@ -7,6 +7,7 @@ const BuildingInfoScraper = require("./building_info/building_info_scraper.js");
 const TimeScheduleScraper = require("./time_schedule/time_schedule_scraper.js");
 const CourseCatalogScraper = require("./course_catalog/course_catalog_scraper.js");
 const CourseEvaluationsCatalogScraper = require("./course_evaluations_catalog/course_evaluations_scraper.js");
+const TimeScheduleDataParser = require("./time_schedule/time_schedule_data_parser.js");
 
 const DATA_EXPORT_BASE_URL = "./data/";
 
@@ -52,6 +53,8 @@ const DATA_EXPORT_BASE_URL = "./data/";
             ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "CEC/", file_name, "data", data);
         });
         */
+
+       TimeScheduleDataParser.mapTimeScheduleDataToLocation();
 
         browser.close();
     } catch (error) {
