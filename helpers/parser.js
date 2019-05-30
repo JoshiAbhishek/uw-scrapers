@@ -12,7 +12,7 @@ const dayOfWeekSplitRegex = new RegExp(/(?=[A-Z])/, "g");
  * @param {*} customValueParser 
  * @returns {*} -  
  */
-function createMapFromObjectPropertyForArray(objectArray, propertyName, ignoreNullAndEmpty, customValueParser) {
+function createMapFromObjectProperty(objectArray, propertyName, ignoreNullAndEmpty, customValueParser) {
     if (objectArray === undefined || objectArray == null || objectArray.length < 1) {
         return objectArray;
     }
@@ -31,8 +31,8 @@ function createMapFromObjectPropertyForArray(objectArray, propertyName, ignoreNu
  * @param {*} customValueParser 
  * @returns {Map<String, Object[]>} -  
  */
-function createMapFromObjectPropertyWithRelatedArrayProperties(objectArray, propertyMap, propertyName, relatedProperties, ignoreNullAndEmpty, customValueParser) {
-    if (objectArray === undefined || objectArray == null || objectArray.length < 1 || propertyName === undefined || propertyName == null) {
+function createMapFromObjectPropertyWithRelatedArrayProperties(objectArray, propertyMap, propertyName, relatedProperties, customValueParser) {
+    if (objectArray === undefined || objectArray == null || objectArray.length < 1 || propertyName === undefined || propertyName == null || relatedProperties === undefined || relatedProperties == null) {
         return null;
     }
 
@@ -40,43 +40,40 @@ function createMapFromObjectPropertyWithRelatedArrayProperties(objectArray, prop
         propertyMap = new Map();
     }
 
-    if (ignoreNullAndEmpty === undefined || ignoreNullAndEmpty == null) {
-        ignoreNullAndEmpty = true;
-    }
-
     for (let i = 0; i < objectArray.length; i++) {
-        var relatedPropLengths = checkRelatedPropertiesLengths(objectArray[i], relatedProperties, ignoreNullAndEmpty);
+        var relatePropsLength = getMaxRelatedPropertiesLength(objectArray[i], relatedProperties);
 
-        if (relatedPropLengths > -1) {
-            for (let j = 0; j < relatedPropLengths; j++) {
-                // create an object for each related property index
-                var temp = JSON.parse(JSON.stringify(objectArray[i]));
+        for (let j = 0; j < relatePropsLength; j++) {
+            // create a new object for each related properties item
+            var temp = JSON.parse(JSON.stringify(objectArray[i]));
 
-                // add all related properties by the current index
-                for (let k = 0; k < relatedProperties.length; k++) {
-                    temp[relatedProperties[k]] = objectArray[i][relatedProperties[k]][j];
+            // add all related properties by the current index
+            for (let k = 0; k < relatedProperties.length; k++) {
+                var currPropArray = objectArray[i][relatedProperties[k]];
+
+                if(currPropArray !== undefined && currPropArray != null) {
+                    if (currPropArray.length < relatePropsLength) {
+                        temp[relatedProperties[k]] = currPropArray[currPropArray.length - 1];
+                    }
+                    else {
+                        temp[relatedProperties[k]] = currPropArray[j];
+                    }
                 }
-
-                // pass to custom value parser if defined
-                if (customValueParser != undefined && customValueParser != null) {
-                    temp = customValueParser(temp);
-                }
-
-                // add value to map with the defined property name as the key
-                var mapKey = temp[propertyName];
-                var mapValue = propertyMap.get(mapKey);
-                if (mapValue == undefined) {
-                    mapValue = [];
-                }
-                mapValue.push(temp);
-                propertyMap.set(mapKey, mapValue);
             }
-        }
-        else {
-            console.log("");
-            console.log(">> Related array properties do not have the same length for the object: ");
-            console.log(objectArray[i]);
-            console.log("");
+            
+            // pass to custom value parser if defined
+            if (customValueParser != undefined && customValueParser != null) {
+                temp = customValueParser(temp);
+            }
+
+            // add value to map with the defined property name as the key
+            var mapKey = temp[propertyName];
+            var mapValue = propertyMap.get(mapKey);
+            if (mapValue == undefined) {
+                mapValue = [];
+            }
+            mapValue.push(temp);
+            propertyMap.set(mapKey, mapValue);
         }
     }
 
@@ -113,6 +110,26 @@ function checkRelatedPropertiesLengths(object, relatedProperties, ignoreNullAndE
         }
 
         i += 1;
+    }
+
+    return length;
+}
+
+/**
+ * 
+ * @param {*} object 
+ * @param {*} relatedProperties 
+ * @returns {*} - 
+ */
+function getMaxRelatedPropertiesLength(object, relatedProperties) {
+    var length = 0;
+
+    for (let i = 0; i < relatedProperties.length; i++) {
+        if (object[relatedProperties[i]] != undefined && object[relatedProperties[i]] != null) {
+            if (object[relatedProperties[i]].length > length) {
+                length = object[relatedProperties[i]].length;
+            }
+        }
     }
 
     return length;

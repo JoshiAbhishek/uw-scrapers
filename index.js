@@ -46,15 +46,15 @@ const DATA_EXPORT_BASE_URL = "./data/";
             ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "Catalog/", file_name, "data", data);
         });
         */
-        
+
         // Scrape and export UW Course Evaluations Catalog information by major
         /*
         await CourseEvaluationsCatalogScraper.exportCourseEvaluationsCatalogByMajor(mainPage, function(file_name, data) {
             ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "CEC/", file_name, "data", data);
         });
         */
-
-       TimeScheduleDataParser.mapTimeScheduleDataToLocation();
+        
+        TimeScheduleDataParser.mapTimeScheduleDataToLocation();
 
         browser.close();
     } catch (error) {
