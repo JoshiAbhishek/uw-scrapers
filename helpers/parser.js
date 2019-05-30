@@ -1,6 +1,6 @@
 "use strict";
 
-const dayAndTimeOfWeekRegex = new RegExp();
+const dayAndTimeOfWeekRegex = new RegExp(/([A-Za-z\.]+)\s(\d+)\-(\d+)([P]*)/);
 
 const dayOfWeekSplitRegex = new RegExp(/(?=[A-Z])/, "g");
 
