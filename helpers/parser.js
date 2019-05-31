@@ -1,43 +1,71 @@
 "use strict";
 
+/*
+
+0 - Original string
+1 - Days
+2 - Start time
+3 - End time
+4 - Time of day
+*/
 const dayAndTimeOfWeekRegex = new RegExp(/([A-Za-z\.]+)\s(\d+)\-(\d+)([P]*)/);
 
+//
 const dayOfWeekSplitRegex = new RegExp(/(?=[A-Z])/, "g");
 
 /**
  * 
  * @param {*} objectArray 
+ * @param {*} finalObject 
  * @param {*} propertyName 
- * @param {*} ignoreNullAndEmpty 
  * @param {*} customValueParser 
  * @returns {*} -  
  */
-function createMapFromObjectProperty(objectArray, propertyName, ignoreNullAndEmpty, customValueParser) {
+function groupObjectsByAProperty(objectArray, finalObject, propertyName, customValueParser) {
     if (objectArray === undefined || objectArray == null || objectArray.length < 1) {
         return objectArray;
     }
 
-    var propertyMap = new Map();
+    if (finalObject === undefined || finalObject == null) {
+        finalObject = {};
+    }
 
+    for (let i = 0; i < objectArray.length; i++) {
+        var temp = JSON.parse(JSON.stringify(objectArray[i]));
 
+        // pass to custom value parser if defined
+        if (customValueParser != undefined && customValueParser != null) {
+            temp = customValueParser(temp);
+        }
+
+        var property = temp[propertyName];
+
+        if (!finalObject.hasOwnProperty(property)) {
+            finalObject[property] = [];
+        }
+
+        finalObject[property].push(temp);
+    }
+
+    return finalObject;
 }
 
 /**
  * 
  * @param {*} objectArray 
+ * @param {*} finalObject 
  * @param {*} propertyName 
  * @param {*} relatedProperties 
- * @param {*} ignoreNullAndEmpty 
  * @param {*} customValueParser 
- * @returns {Map<String, Object[]>} -  
+ * @returns {*} -  
  */
-function createMapFromObjectPropertyWithRelatedArrayProperties(objectArray, propertyMap, propertyName, relatedProperties, customValueParser) {
+function groupObjectsWithRelatedArrayPropertiesByAProperty(objectArray, finalObject, propertyName, relatedProperties, customValueParser) {
     if (objectArray === undefined || objectArray == null || objectArray.length < 1 || propertyName === undefined || propertyName == null || relatedProperties === undefined || relatedProperties == null) {
         return null;
     }
 
-    if (propertyMap === undefined || propertyMap == null) {
-        propertyMap = new Map();
+    if (finalObject === undefined || finalObject == null) {
+        finalObject = {};
     }
 
     for (let i = 0; i < objectArray.length; i++) {
@@ -51,7 +79,7 @@ function createMapFromObjectPropertyWithRelatedArrayProperties(objectArray, prop
             for (let k = 0; k < relatedProperties.length; k++) {
                 var currPropArray = objectArray[i][relatedProperties[k]];
 
-                if(currPropArray !== undefined && currPropArray != null) {
+                if (currPropArray !== undefined && currPropArray != null) {
                     if (currPropArray.length < relatePropsLength) {
                         temp[relatedProperties[k]] = currPropArray[currPropArray.length - 1];
                     }
@@ -60,24 +88,24 @@ function createMapFromObjectPropertyWithRelatedArrayProperties(objectArray, prop
                     }
                 }
             }
-            
+
             // pass to custom value parser if defined
             if (customValueParser != undefined && customValueParser != null) {
                 temp = customValueParser(temp);
             }
 
-            // add value to map with the defined property name as the key
-            var mapKey = temp[propertyName];
-            var mapValue = propertyMap.get(mapKey);
-            if (mapValue == undefined) {
-                mapValue = [];
+            // add value to final object with the defined property's value
+            var property = temp[propertyName];
+
+            if (!finalObject.hasOwnProperty(property)) {
+                finalObject[property] = [];
             }
-            mapValue.push(temp);
-            propertyMap.set(mapKey, mapValue);
+
+            finalObject[property].push(temp);
         }
     }
 
-    return propertyMap;
+    return finalObject;
 }
 
 /**
@@ -139,14 +167,53 @@ function getMaxRelatedPropertiesLength(object, relatedProperties) {
  * 
  * @param {*} objectArray 
  * @param {*} relatedProperties 
+ * @param {*} customValueParser 
  * @returns {Object[]} -  
  */
-function expandObjectByRelatedArrayProperties(objectArray, relatedProperties) {
-    if (objectArray === undefined || objectArray == null || objectArray.length < 1) {
+function expandObjectArrayByRelatedArrayProperties(objectArray, relatedProperties, customValueParser) {
+    if (objectArray === undefined || objectArray == null || objectArray.length < 1 || relatedProperties === undefined || relatedProperties == null) {
         return objectArray;
     }
 
+    var originalArrayLength = Number(objectArray.length);
 
+    for (let i = 0; i < originalArrayLength; i++) {
+        var relatePropsLength = getMaxRelatedPropertiesLength(objectArray[i], relatedProperties);
+
+        for (let j = 0; j < relatePropsLength; j++) {
+            // create new object for each related properties item
+            var temp = JSON.parse(JSON.stringify(objectArray[i]));
+
+            // add all related properties by the current index
+            for (let k = 0; k < relatedProperties.length; k++) {
+                var currPropArray = objectArray[i][relatedProperties[k]];
+
+                if (currPropArray !== undefined && currPropArray != null) {
+                    if (currPropArray.length < relatePropsLength) {
+                        temp[relatedProperties[k]] = currPropArray[currPropArray.length - 1];
+                    }
+                    else {
+                        temp[relatedProperties[k]] = currPropArray[j];
+                    }
+                }
+            }
+
+            // pass to custom value parser if defined
+            if (customValueParser != undefined && customValueParser != null) {
+                temp = customValueParser(temp);
+            }
+
+            // replace original object in array and append new objects
+            if (j == 0) {
+                objectArray[i] = temp;
+            }
+            else {
+                objectArray.push(temp);
+            }
+        }
+    }
+
+    return objectArray;
 }
 
 /**
@@ -155,21 +222,120 @@ function expandObjectByRelatedArrayProperties(objectArray, relatedProperties) {
  * @returns {Object} -
  */
 function createDayAndTimeOfWeekObjectFromString(str) {
+    if (str === undefined || str == null) {
+        return null;
+    }
 
+    var temp = {};
+
+    var dayAndTimeCaptureGroups = dayAndTimeOfWeekRegex.exec(str);
+
+    var days = dayAndTimeCaptureGroups[1].split(dayOfWeekSplitRegex);
+
+    var startTime = dayAndTimeCaptureGroups[2];
+    var endTime = dayAndTimeCaptureGroups[3];
+    var startTimeHour = startTime.charAt(0);
+    var endTimeHour = endTime.charAt(0);
+
+    var timeOfDay = dayAndTimeCaptureGroups[4];
+
+    var startInEvening = false;
+    var endInEvening = false;
+
+    if (timeOfDay != null && timeOfDay.toLowerCase().startsWith("p")) {
+        startInEvening = true;
+        endInEvening = true;
+    }  
+    else if (startTimeHour > 3 && startTimeHour < 12) {
+        if (endTimeHour > 3 && endTimeHour < 12) {
+            startInEvening = false;
+            endInEvening = false;
+        }
+        else {
+            startInEvening = false;
+            endInEvening = true;
+        }
+    }
+    else {
+        console.log("");
+        console.log(">> ERROR: ");
+        console.log("Could not parse time string: " + str);
+        console.log("");
+
+        return null;
+    }
+    
+    startTime = convertTimeToMilitaryTimeNumber(startTime, startInEvening);
+    endTime = convertTimeToMilitaryTimeNumber(endTime, endInEvening);
+
+    temp["StartTime"] = startTime;
+    temp["EndTime"] = endTime;
+
+    return temp;
 }
 
 /**
  * 
- * @param {*} str 
+ * @param {*} startTime 
+ * @param {*} endTime 
+ * @param {*} startTimeBeforeMidDay 
+ * @param {*} endTimeBeforeMidDay 
  * @returns {Object} -
  */
-function getTimeOfDayFromRange(str) {
-    var timeOfDayArr = str.split(dayOfWeekSplitRegex);
+function convertTimeRangeToMilitaryTime(startTime, endTime, startTimeBeforeMidDay, endTimeBeforeMidDay) {
+    var temp = {};
 
-    console.log(timeOfDayArr);
+    if (startTime === undefined || startTime == null || endTime === undefined || endTime == null) {
+        return temp;
+    }
+}
+
+/**
+ * 
+ * @param {*} time 
+ * @param {*} isAfterTweleve 
+ * @returns {*} -
+ */
+function convertTimeToMilitaryTimeNumber(time, isAfterTweleve) {
+    if (time === undefined || time == null || time.length < 2 || isAfterTweleve === undefined || isAfterTweleve == null) {
+        return time;
+    }
+
+    if (typeof time === "string") {
+        time = time.replace(":", "");
+    }
+
+    var newTime = Number(time);
+
+    if (isAfterTweleve) {
+        if (time.length < 3) {
+            newTime = newTime * 100;
+        }
+
+        if (!time.startsWith("12")) {
+            newTime += 1200;
+        }
+    }
+    else {
+        if (time.startsWith("12")) {
+            if (time.length < 3) {
+                newTime = 0;
+            }
+            else {
+                newTime = newTime % 100;
+            }
+        }
+    }
+
+    return newTime;
 }
 
 module.exports = {
-    createMapFromObjectPropertyWithRelatedArrayProperties,
-    getTimeOfDayFromRange
+    groupObjectsByAProperty,
+    groupObjectsWithRelatedArrayPropertiesByAProperty,
+    expandObjectArrayByRelatedArrayProperties,
+    checkRelatedPropertiesLengths,
+    getMaxRelatedPropertiesLength,
+    createDayAndTimeOfWeekObjectFromString,
+    convertTimeToMilitaryTimeNumber
 };

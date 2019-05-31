@@ -69,7 +69,7 @@ function mapTimeScheduleDataToLocation() {
         "catalogURL": "https://www.washington.edu/students/crscat/info.html#info415"
     }];
 
-    var objectMap = ParserUtils.createMapFromObjectPropertyWithRelatedArrayProperties(objectArray, null, "location", ["time", "location", "instructor"], formatTimeScheduleCourseForLocationMap);
+    var objectMap = ParserUtils.groupObjectsWithRelatedArrayPropertiesByAProperty(objectArray, null, "location", ["time", "location", "instructor"], formatTimeScheduleCourseForLocationMap);
 
     console.log(objectMap);
 
