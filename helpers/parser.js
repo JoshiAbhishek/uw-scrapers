@@ -13,6 +13,45 @@ const dayAndTimeOfWeekRegex = new RegExp(/([A-Za-z\.]+)\s(\d+)\-(\d+)([P]*)/);
 //
 const dayOfWeekSplitRegex = new RegExp(/(?=[A-Z])/, "g");
 
+// Enum for converting lowercase string abbreviations of days of the week to their corresponding full name
+var dayExpressionsToDayEnum = Object.freeze({
+    "m": "Monday",
+    "mo": "Monday",
+    "mon": "Monday",
+    "monday": "Monday",
+    "t": "Tuesday",
+    "tu": "Tuesday",
+    "tue": "Tuesday",
+    "tues": "Tuesday",
+    "tuesday": "Tuesday",
+    "w": "Wednesday",
+    "wed": "Wednesday",
+    "weds": "Wednesday",
+    "wednesday": "Wednesday",
+    "th": "Thursday",
+    "thur": "Thursday",
+    "thurs": "Thursday",
+    "thursday": "Thursday",
+    "f": "Friday",
+    "fri": "Friday",
+    "friday": "Friday",
+    "s": "Saturday",
+    "sat": "Saturday",
+    "saturday": "Saturday",
+    "su": "Sunday",
+    "sun": "Sunday",
+    "sunday": "Sunday"
+});
+
+/**
+ * Returns the full name of a day of the week from an abbreviation
+ * @param {String} day - An abbreviation of the name of a day of the week
+ * @returns {String} - The full name of a day of the week
+ */
+function getFullDayNameFromAbbreviation(day) {
+    return dayExpressionsToDayEnum[day.toLowerCase()];
+}
+
 /**
  * 
  * @param {*} objectArray 
@@ -218,15 +257,64 @@ function expandObjectArrayByRelatedArrayProperties(objectArray, relatedPropertie
 
 /**
  * 
- * @param {*} str 
+ * @param {*} object 
+ * @param {*} relatedProperties 
+ * @param {*} customValueParser 
+ * @returns {Object[]} -  
+ */
+function getExpandedObjectsArrayFromRelatedArrayProperties(currentObject, relatedProperties, customValueParser) {
+    if (currentObject === undefined || currentObject == null || relatedProperties === undefined || relatedProperties == null) {
+        return currentObject;
+    }
+
+    var objectArray = [];
+
+    var relatePropsLength = getMaxRelatedPropertiesLength(currentObject, relatedProperties);
+
+    for (let j = 0; j < relatePropsLength; j++) {
+        // create new object for each related properties item
+        var temp = JSON.parse(JSON.stringify(currentObject));
+
+        // add all related properties by the current index
+        for (let k = 0; k < relatedProperties.length; k++) {
+            var currPropArray = currentObject[relatedProperties[k]];
+
+            if (currPropArray !== undefined && currPropArray != null) {
+                if (currPropArray.length < relatePropsLength) {
+                    temp[relatedProperties[k]] = currPropArray[currPropArray.length - 1];
+                }
+                else {
+                    temp[relatedProperties[k]] = currPropArray[j];
+                }
+            }
+        }
+
+        // pass to custom value parser if defined
+        if (customValueParser != undefined && customValueParser != null) {
+            temp = customValueParser(temp);
+        }
+
+        // replace original object in array and append new objects
+        objectArray.push(temp);
+    }
+
+    return objectArray;
+}
+
+/**
+ * 
+ * @param {*} str
+ * @param {*} finalObject  
  * @returns {Object} -
  */
-function createDayAndTimeOfWeekObjectFromString(str) {
+function createDayAndTimeOfWeekObjectsFromString(str, finalObject) {
     if (str === undefined || str == null) {
         return null;
     }
 
-    var temp = {};
+    if (finalObject === undefined || finalObject == null) {
+        finalObject = {};
+    }
 
     var dayAndTimeCaptureGroups = dayAndTimeOfWeekRegex.exec(str);
 
@@ -234,10 +322,35 @@ function createDayAndTimeOfWeekObjectFromString(str) {
 
     var startTime = dayAndTimeCaptureGroups[2];
     var endTime = dayAndTimeCaptureGroups[3];
+    var timeOfDay = dayAndTimeCaptureGroups[4];
+
+    var timeObject = createTimeOfDayObject(startTime, endTime, timeOfDay, finalObject);
+
+    var daysAndTimes = new Array(days.length);
+
+    for(let i = 0; i < days.length; i++) {
+        var temp = JSON.parse(JSON.stringify(timeObject));
+        temp["day"] = getFullDayNameFromAbbreviation(days[i]);
+        daysAndTimes[i] = temp;
+    }
+
+    return daysAndTimes;
+}
+
+/**
+ * 
+ * @param {*} startTime 
+ * @param {*} endTime 
+ * @param {*} timeOfDay 
+ * @param {*} finalObject 
+ */
+function createTimeOfDayObject(startTime, endTime, timeOfDay, finalObject) {
+    if (finalObject === undefined || finalObject == null) {
+        finalObject = {};
+    }
+
     var startTimeHour = startTime.charAt(0);
     var endTimeHour = endTime.charAt(0);
-
-    var timeOfDay = dayAndTimeCaptureGroups[4];
 
     var startInEvening = false;
     var endInEvening = false;
@@ -245,7 +358,7 @@ function createDayAndTimeOfWeekObjectFromString(str) {
     if (timeOfDay != null && timeOfDay.toLowerCase().startsWith("p")) {
         startInEvening = true;
         endInEvening = true;
-    }  
+    }
     else if (startTimeHour > 3 && startTimeHour < 12) {
         if (endTimeHour > 3 && endTimeHour < 12) {
             startInEvening = false;
@@ -258,46 +371,30 @@ function createDayAndTimeOfWeekObjectFromString(str) {
     }
     else {
         console.log("");
-        console.log(">> ERROR: ");
-        console.log("Could not parse time string: " + str);
+        console.log(">> Could not parse time string: ");
+        console.log(str);
         console.log("");
 
         return null;
     }
-    
+
     startTime = convertTimeToMilitaryTimeNumber(startTime, startInEvening);
     endTime = convertTimeToMilitaryTimeNumber(endTime, endInEvening);
 
-    temp["StartTime"] = startTime;
-    temp["EndTime"] = endTime;
+    finalObject["StartTime"] = startTime;
+    finalObject["EndTime"] = endTime;
 
-    return temp;
-}
-
-/**
- * 
- * @param {*} startTime 
- * @param {*} endTime 
- * @param {*} startTimeBeforeMidDay 
- * @param {*} endTimeBeforeMidDay 
- * @returns {Object} -
- */
-function convertTimeRangeToMilitaryTime(startTime, endTime, startTimeBeforeMidDay, endTimeBeforeMidDay) {
-    var temp = {};
-
-    if (startTime === undefined || startTime == null || endTime === undefined || endTime == null) {
-        return temp;
-    }
+    return finalObject;
 }
 
 /**
  * 
  * @param {*} time 
- * @param {*} isAfterTweleve 
+ * @param {*} isAfterTwelve 
  * @returns {*} -
  */
-function convertTimeToMilitaryTimeNumber(time, isAfterTweleve) {
-    if (time === undefined || time == null || time.length < 2 || isAfterTweleve === undefined || isAfterTweleve == null) {
+function convertTimeToMilitaryTimeNumber(time, isAfterTwelve) {
+    if (time === undefined || time == null || time.length < 2 || isAfterTwelve === undefined || isAfterTwelve == null) {
         return time;
     }
 
@@ -307,7 +404,7 @@ function convertTimeToMilitaryTimeNumber(time, isAfterTweleve) {
 
     var newTime = Number(time);
 
-    if (isAfterTweleve) {
+    if (isAfterTwelve) {
         if (time.length < 3) {
             newTime = newTime * 100;
         }
@@ -331,11 +428,16 @@ function convertTimeToMilitaryTimeNumber(time, isAfterTweleve) {
 }
 
 module.exports = {
+    dayAndTimeOfWeekRegex,
+    dayExpressionsToDayEnum,
+    getFullDayNameFromAbbreviation,
     groupObjectsByAProperty,
     groupObjectsWithRelatedArrayPropertiesByAProperty,
-    expandObjectArrayByRelatedArrayProperties,
     checkRelatedPropertiesLengths,
     getMaxRelatedPropertiesLength,
-    createDayAndTimeOfWeekObjectFromString,
+    expandObjectArrayByRelatedArrayProperties,
+    getExpandedObjectsArrayFromRelatedArrayProperties,
+    createDayAndTimeOfWeekObjectsFromString,
+    createTimeOfDayObject,
     convertTimeToMilitaryTimeNumber
 };
