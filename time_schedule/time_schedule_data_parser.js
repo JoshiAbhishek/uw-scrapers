@@ -25,38 +25,38 @@ function mapTimeScheduleDataToLocation(timeScheduleData, finalObject) {
     }
 
     for (let i = 0; i < timeScheduleData.length; i++) {
-        var locationSplit = timeScheduleData[i]["location"].split(" ");
-        
-        if (locationSplit == null || locationSplit.length < 2) {
-            console.log("");
-            console.log(">> Could not parse location information for course: ");
-            console.log(timeScheduleData[i]);
-            console.log("");
+        var expandedObjects = ParserUtils.getExpandedObjectsArrayFromRelatedArrayProperties(timeScheduleData[i], ["time", "location", "instructor"]);
 
-            continue;
-        }
+        for (let j = 0; j < expandedObjects.length; j++) {
+            var locationSplit = expandedObjects[j]["location"].split(" ");
 
-        var building = locationSplit[0];
-        var room = locationSplit[1];
+            if (locationSplit == null || locationSplit.length < 2) {
+                console.log("");
+                console.log(">> Could not parse location information for course: ");
+                console.log(timeScheduleData[i]);
+                console.log("");
 
-        if (!finalObject.hasOwnProperty(building)) {
-            finalObject[building] = {};
-        }
-        
-        if (!finalObject[building].hasOwnProperty(room)) {
-            finalObject[building][room] = {};
-        }
+                break;
+            }
 
-        var expandedObjects = getExpandedObjectsArrayFromRelatedArrayProperties(timeScheduleData[i], ["time", "location", "instructor"]);
+            var building = locationSplit[0];
+            var room = locationSplit[1];
 
-        for(let j = 0; j < expandedObjects.length; j++) {
-            var objectsByDay = createDayAndTimeOfWeekObjectsFromString(expandedObjects[i]["time"], expandedObjects[i]);
+            if (!finalObject.hasOwnProperty(building)) {
+                finalObject[building] = {};
+            }
 
-            for(let k = 0; k < objectsByDay.length; k++) {
+            if (!finalObject[building].hasOwnProperty(room)) {
+                finalObject[building][room] = {};
+            }
+
+            var objectsByDay = ParserUtils.createDayAndTimeOfWeekObjectsFromString(expandedObjects[j]["time"], expandedObjects[j]);
+
+            for (let k = 0; k < objectsByDay.length; k++) {
                 var day = objectsByDay[k]["day"];
                 delete objectsByDay[k]["day"];
 
-                if(!finalObject[building][room].hasOwnProperty(day)) {
+                if (!finalObject[building][room].hasOwnProperty(day)) {
                     finalObject[building][room][day] = {};
                 }
 

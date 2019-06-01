@@ -1,55 +1,21 @@
 "use strict";
 
-/*
+function regexCaputureGroupHasContent(captureGroup) {
+    return captureGroup != undefined && captureGroup != null && captureGroup != "" && captureGroup != " ";
+}
 
-0 - Original string
-1 - Days
-2 - Start time
-3 - End time
-4 - Time of day
-*/
-const dayAndTimeOfWeekRegex = new RegExp(/([A-Za-z\.]+)\s(\d+)\-(\d+)([P]*)/);
+function multipleRegexCaptureGroupsHaveContent(captureGroupsArray, startIndex, endIndex) {
+    if(startIndex > endIndex || endIndex > captureGroupsArray.length - 1) {
+        return false;
+    }
 
-//
-const dayOfWeekSplitRegex = new RegExp(/(?=[A-Z])/, "g");
+    for(let i = 0; i < captureGroupsArray.length; i++) {
+        if(!regexCaputureGroupHasContent(captureGroupsArray[i])) {
+            return false;
+        }
+    }
 
-// Enum for converting lowercase string abbreviations of days of the week to their corresponding full name
-var dayExpressionsToDayEnum = Object.freeze({
-    "m": "Monday",
-    "mo": "Monday",
-    "mon": "Monday",
-    "monday": "Monday",
-    "t": "Tuesday",
-    "tu": "Tuesday",
-    "tue": "Tuesday",
-    "tues": "Tuesday",
-    "tuesday": "Tuesday",
-    "w": "Wednesday",
-    "wed": "Wednesday",
-    "weds": "Wednesday",
-    "wednesday": "Wednesday",
-    "th": "Thursday",
-    "thur": "Thursday",
-    "thurs": "Thursday",
-    "thursday": "Thursday",
-    "f": "Friday",
-    "fri": "Friday",
-    "friday": "Friday",
-    "s": "Saturday",
-    "sat": "Saturday",
-    "saturday": "Saturday",
-    "su": "Sunday",
-    "sun": "Sunday",
-    "sunday": "Sunday"
-});
-
-/**
- * Returns the full name of a day of the week from an abbreviation
- * @param {String} day - An abbreviation of the name of a day of the week
- * @returns {String} - The full name of a day of the week
- */
-function getFullDayNameFromAbbreviation(day) {
-    return dayExpressionsToDayEnum[day.toLowerCase()];
+    return true;
 }
 
 /**
@@ -359,23 +325,25 @@ function createTimeOfDayObject(startTime, endTime, timeOfDay, finalObject) {
         startInEvening = true;
         endInEvening = true;
     }
-    else if (startTimeHour > 3 && startTimeHour < 12) {
+    else if ((startTimeHour > 3 && startTimeHour < 12) || (startTimeHour == 4 && Number(startTime) < 430)) {
+        startInEvening = false;
+
         if (endTimeHour > 3 && endTimeHour < 12) {
-            startInEvening = false;
             endInEvening = false;
         }
         else {
-            startInEvening = false;
             endInEvening = true;
         }
     }
     else {
-        console.log("");
-        console.log(">> Could not parse time string: ");
-        console.log(str);
-        console.log("");
+        startInEvening = true;
 
-        return null;
+        if (endTimeHour > 3 && endTimeHour < 12) {
+            endInEvening = false;
+        }
+        else {
+            endInEvening = true;
+        }
     }
 
     startTime = convertTimeToMilitaryTimeNumber(startTime, startInEvening);
@@ -428,16 +396,12 @@ function convertTimeToMilitaryTimeNumber(time, isAfterTwelve) {
 }
 
 module.exports = {
-    dayAndTimeOfWeekRegex,
-    dayExpressionsToDayEnum,
-    getFullDayNameFromAbbreviation,
+    regexCaputureGroupHasContent,
+    multipleRegexCaptureGroupsHaveContent,
     groupObjectsByAProperty,
     groupObjectsWithRelatedArrayPropertiesByAProperty,
     checkRelatedPropertiesLengths,
     getMaxRelatedPropertiesLength,
     expandObjectArrayByRelatedArrayProperties,
-    getExpandedObjectsArrayFromRelatedArrayProperties,
-    createDayAndTimeOfWeekObjectsFromString,
-    createTimeOfDayObject,
-    convertTimeToMilitaryTimeNumber
+    getExpandedObjectsArrayFromRelatedArrayProperties
 };
