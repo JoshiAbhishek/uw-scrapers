@@ -1,10 +1,12 @@
 "use strict";
 
 const ParserUtils = require("../helpers/parser.js");
+const TimeUtils = require("../helpers/time.js");
 
 /**
  * 
  * @param {*} folderPath 
+ * @returns {*} - 
  */
 function mapTimeScheduleDataToLocationFromFolder(folderPath) {
 
@@ -14,6 +16,7 @@ function mapTimeScheduleDataToLocationFromFolder(folderPath) {
  * 
  * @param {*} timeScheduleData 
  * @param {*} finalObject 
+ * @returns {*} - 
  */
 function mapTimeScheduleDataToLocation(timeScheduleData, finalObject) {
     if (timeScheduleData === undefined || timeScheduleData == null) {
@@ -50,7 +53,7 @@ function mapTimeScheduleDataToLocation(timeScheduleData, finalObject) {
                 finalObject[building][room] = {};
             }
 
-            var objectsByDay = ParserUtils.createDayAndTimeOfWeekObjectsFromString(expandedObjects[j]["time"], expandedObjects[j]);
+            var objectsByDay = TimeUtils.createArrayOfDayAndTimeObjectsFromTemplate(expandedObjects[j]["time"], expandedObjects[j]);
 
             for (let k = 0; k < objectsByDay.length; k++) {
                 var day = objectsByDay[k]["day"];
@@ -80,7 +83,8 @@ function formatTimeScheduleCourseForLocationMap(course) {
     temp["title"] = course["title"];
     temp["instructor"] = course["instructor"]
     temp["catalogURL"] = course["catalogURL"];
-    temp["time"] = course["time"];
+    temp["startTime"] = course["startTime"];
+    temp["endTime"] = course["endTime"];
     temp["location"] = course["location"];
 
     return temp;
