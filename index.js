@@ -1,5 +1,6 @@
 "use strict";
 
+const Path = require("path");
 const Puppeteer = require('puppeteer');
 const ExportUtils = require("./helpers/export.js");
 
@@ -9,7 +10,7 @@ const CourseCatalogScraper = require("./course_catalog/course_catalog_scraper.js
 const CourseEvaluationsCatalogScraper = require("./course_evaluations_catalog/course_evaluations_scraper.js");
 const TimeScheduleDataParser = require("./time_schedule/time_schedule_data_parser.js");
 
-const DATA_EXPORT_BASE_URL = "./data/";
+const DATA_EXPORT_BASE_URL = Path.join(__dirname, "./data/");
 
 var objectArray = [{
     "title": "VISUAL INFO DESIGN",
@@ -119,8 +120,14 @@ var objectArray = [{
             ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "CEC/", file_name, "data", data);
         });
         */
-        
-        TimeScheduleDataParser.mapTimeScheduleDataToLocation(objectArray, {});
+
+        // TimeScheduleDataParser.exportTimeScheduleDataMappedToLocationFromFile(DATA_EXPORT_BASE_URL + "SPR2019/info.json", function (data) {
+        //     ExportUtils.exportJSONObject(DATA_EXPORT_BASE_URL, "TSINFOMAP.json", data);
+        // });
+
+        TimeScheduleDataParser.exportTimeScheduleDataMappedToLocationFromFolder(DATA_EXPORT_BASE_URL + "SPR2019/", function (data) {
+            ExportUtils.exportJSONObject(DATA_EXPORT_BASE_URL, "TSMAP.json", data);
+        });
 
         browser.close();
     } catch (error) {

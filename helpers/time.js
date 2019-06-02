@@ -114,7 +114,7 @@ function addDayAndTimesToObject(dateTimeRange, finalObject) {
         finalObject = {};
     }
 
-    var dayTimeCaptureGroups = fullDayAndTimeOfWeekRegex.exec(str1.replace("midnight", "11:59 pm").replace(":", ""));
+    var dayTimeCaptureGroups = fullDayAndTimeOfWeekRegex.exec(dateTimeRange.replace("midnight", "11:59 pm").replace(":", ""));
 
     var dayTimeRange = false;
     var days;
@@ -204,6 +204,10 @@ function createArrayOfDayAndTimeObjectsFromTemplate(dateTimeRange, templateObjec
 
     var daysAndTimes = addDayAndTimesToObject(dateTimeRange, {});
 
+    if(daysAndTimes == null) {
+        return null;
+    }
+
     var finalDaysAndTimes = [];
 
     for (let i = 1; i <= 7; i++) {
@@ -213,8 +217,8 @@ function createArrayOfDayAndTimeObjectsFromTemplate(dateTimeRange, templateObjec
             var temp = JSON.parse(JSON.stringify(templateObject));
 
             temp["day"] = day;
-            temp["startTime"] = daysAndTimes["day"]["startTime"];
-            temp["endTime"] = daysAndTimes["day"]["endTime"];
+            temp["startTime"] = daysAndTimes[day]["startTime"];
+            temp["endTime"] = daysAndTimes[day]["endTime"];
 
             finalDaysAndTimes.push(temp);
         }
@@ -252,6 +256,15 @@ function convertTimeRangeToMilitaryTimeFormat(timeRange) {
     var timeObject = convertTimeAndTimesOfDayToMilitaryTimeFormat(startTime, endTime, startTimeOfDay, endTimeOfDay);
 
     return timeObject;
+}
+
+/**
+ * 
+ * @param {*} time
+ * @returns {*} -  
+ */
+function timeStartsAfterTweleve(time) {
+    return !time.toLowerCase().startsWith("12") || (time.toLowerCase().startsWith("12") && time.length < 3);
 }
 
 /**
@@ -298,17 +311,17 @@ function convertTimeAndTimesOfDayToMilitaryTimeFormat(startTime, endTime, startT
 
     if (startTimeOfDay.toLowerCase().startsWith("a")) {
         if (endTimeOfDay.toLowerCase().startsWith("p")) {
-            if (!endTime.toLowerCase().startsWith("12")) {
+            if (timeStartsAfterTweleve(endTime)) {
                 endTimeNum += 1200;
             }
         }
         else {
-            if (endTime.toLowerCase().startsWith("12")) {
+            if (timeStartsAfterTweleve(endTime)) {
                 endTimeNum %= 100;
             }
         }
 
-        if (startTime.toLowerCase().startsWith("12")) {
+        if (timeStartsAfterTweleve(startTime)) {
             startTimeNum %= 100;
         }
     }
@@ -322,38 +335,37 @@ function convertTimeAndTimesOfDayToMilitaryTimeFormat(startTime, endTime, startT
             return null;
         }
 
-        if (!startTime.toLowerCase().startsWith("12")) {
+        if (timeStartsAfterTweleve(startTime)) {
             startTimeNum += 1200;
         }
 
-        if (!endTime.toLowerCase().startsWith("12")) {
+        if (timeStartsAfterTweleve(endTime)) {
             endTimeNum += 1200;
         }
     }
     else {
         if (endTimeOfDay.toLowerCase().startsWith("p")) {
             // Assume that start time is in the morning if it is larger than the end time
-            if (startTimeNum < endTimeNum && !startTime.toLowerCase().startsWith("12")) {
+            if (startTimeNum < endTimeNum && timeStartsAfterTweleve(startTime)) {
                 startTimeNum += 1200;
             }
 
-            if (!endTime.toLowerCase().startsWith("12")) {
+            if (timeStartsAfterTweleve(endTime)) {
                 endTimeNum += 1200;
             }
         }
         else if (!endTimeOfDay.toLowerCase().startsWith("a")) {
             // Assume that start time is in the morning if it is larger than the end time
-            if (startTimeNum > endTimeNum && !endTime.toLowerCase().startsWith("12")) {
+            if (startTimeNum > endTimeNum || timeStartsAfterTweleve(endTime)) {
                 endTimeNum += 1200;
             }
             else if (startTimeNum < 430) {
                 // Assume that both start and end time are in the afternoon if the start is before 4:30
-
-                if (!startTime.toLowerCase().startsWith("12")) {
+                if (timeStartsAfterTweleve(startTime)) {
                     startTimeNum += 1200;
                 }
 
-                if (!endTime.toLowerCase().startsWith("12")) {
+                if (timeStartsAfterTweleve(endTime)) {
                     endTimeNum += 1200;
                 }
             }

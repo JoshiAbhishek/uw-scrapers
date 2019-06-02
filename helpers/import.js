@@ -42,7 +42,7 @@ function getJSONPropertyContentsFromFile(filePath, propertyName) {
         console.log(">> ERROR: file must be in json format");
         return null;
     }
-
+    
     var jsonObject = require(filePath);
 
     return jsonObject[propertyName];

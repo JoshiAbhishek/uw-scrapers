@@ -1,5 +1,7 @@
 "use strict";
 
+const ProgressBar = require('progress');
+
 const ImportUtils = require("../helpers/import.js");
 const ParserUtils = require("../helpers/parser.js");
 const TimeUtils = require("../helpers/time.js");
@@ -19,7 +21,13 @@ function mapTimeScheduleDataToLocationFromFolder(folderPath) {
 
     var fileNames = ImportUtils.getFileNamesInFolder(folderPath);
 
+    var bar = new ProgressBar(':bar :current/:total', {
+        total: fileNames.length
+    });
+    
     for (let i = 0; i < fileNames.length; i++) {
+        bar.tick();
+
         var timeScheduleData = ImportUtils.getJSONPropertyContentsFromFile(fileNames[i], "data");
 
         finalTSLocationMapObject = mapTimeScheduleDataToLocation(timeScheduleData, finalTSLocationMapObject);
@@ -34,7 +42,7 @@ function mapTimeScheduleDataToLocationFromFolder(folderPath) {
  * @param {*} exportFunction 
  */
 function exportTimeScheduleDataMappedToLocationFromFolder(folderPath, exportFunction) {
-    if(arguments.length < 2) {
+    if (arguments.length < 2) {
         console.log(">> ERROR: folderPath and exportFunction must be defined");
         return;
     }
@@ -68,7 +76,7 @@ function mapTimeScheduleDataToLocationFromFile(filePath) {
  * @param {*} exportFunction 
  */
 function exportTimeScheduleDataMappedToLocationFromFile(filePath, exportFunction) {
-    if(arguments.length < 2) {
+    if (arguments.length < 2) {
         console.log(">> ERROR: filePath and exportFunction must be defined");
         return;
     }
@@ -121,15 +129,35 @@ function mapTimeScheduleDataToLocation(timeScheduleData, finalObject) {
 
             var objectsByDay = TimeUtils.createArrayOfDayAndTimeObjectsFromTemplate(expandedObjects[j]["time"], expandedObjects[j]);
 
+            if (objectsByDay == null) {
+                continue;
+            }
+
             for (let k = 0; k < objectsByDay.length; k++) {
                 var day = objectsByDay[k]["day"];
                 delete objectsByDay[k]["day"];
 
                 if (!finalObject[building][room].hasOwnProperty(day)) {
-                    finalObject[building][room][day] = {};
-                }
+                    finalObject[building][room][day] = [];
 
-                finalObject[building][room][day] = formatTimeScheduleCourseForLocationMap(objectsByDay[k]);
+                    finalObject[building][room][day].push(formatTimeScheduleCourseForLocationMap(objectsByDay[k]));
+                }
+                else {
+                    var originalDayArrayLength = finalObject[building][room][day].length;
+
+                    var duplicateStartOrEndTime = false;
+
+                    for (let l = 0; l < originalDayArrayLength; l++) {
+                        if (finalObject[building][room][day][l]["startTime"] == objectsByDay[k]["startTime"] || finalObject[building][room][day][l]["endTime"] == objectsByDay[k]["endTime"]) {
+                            duplicateStartOrEndTime = true;
+                            break;
+                        }
+                    }
+
+                    if(!duplicateStartOrEndTime) {
+                        finalObject[building][room][day].push(formatTimeScheduleCourseForLocationMap(objectsByDay[k]));
+                    }
+                }
             }
         }
     }
@@ -147,11 +175,8 @@ function formatTimeScheduleCourseForLocationMap(course) {
     temp["sln"] = course["sln"];
     temp["alias"] = course["alias"];
     temp["title"] = course["title"];
-    temp["instructor"] = course["instructor"]
-    temp["catalogURL"] = course["catalogURL"];
     temp["startTime"] = course["startTime"];
     temp["endTime"] = course["endTime"];
-    temp["location"] = course["location"];
 
     return temp;
 }
@@ -160,7 +185,7 @@ module.exports = {
     mapTimeScheduleDataToLocationFromFolder,
     mapTimeScheduleDataToLocationFromFile,
     mapTimeScheduleDataToLocation,
-    exportTimeScheduleDataMappedToLocationFromFolder, 
+    exportTimeScheduleDataMappedToLocationFromFolder,
     exportTimeScheduleDataMappedToLocationFromFile,
     formatTimeScheduleCourseForLocationMap
 };
