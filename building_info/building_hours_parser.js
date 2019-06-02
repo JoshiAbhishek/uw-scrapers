@@ -1,5 +1,7 @@
 "use strict";
 
+const TimeUtils = require("../helpers/time.js");
+
 // Enum for converting days of the week as names to corresponding numbers (starting at 1 for Monday)
 var DaysToNumsEnum = Object.freeze({
     "Monday": 1,

@@ -1,5 +1,6 @@
 "use strict";
 
+const ImportUtils = require("../helpers/import.js");
 const ParserUtils = require("../helpers/parser.js");
 const TimeUtils = require("../helpers/time.js");
 
@@ -9,7 +10,72 @@ const TimeUtils = require("../helpers/time.js");
  * @returns {*} - 
  */
 function mapTimeScheduleDataToLocationFromFolder(folderPath) {
+    if (folderPath === undefined || folderPath == null || folderPath == "") {
+        console.log(">> ERROR: folderPath must be defined");
+        return null;
+    }
 
+    var finalTSLocationMapObject = {};
+
+    var fileNames = ImportUtils.getFileNamesInFolder(folderPath);
+
+    for (let i = 0; i < fileNames.length; i++) {
+        var timeScheduleData = ImportUtils.getJSONPropertyContentsFromFile(fileNames[i], "data");
+
+        finalTSLocationMapObject = mapTimeScheduleDataToLocation(timeScheduleData, finalTSLocationMapObject);
+    }
+
+    return finalTSLocationMapObject;
+}
+
+/**
+ * 
+ * @param {*} folderPath 
+ * @param {*} exportFunction 
+ */
+function exportTimeScheduleDataMappedToLocationFromFolder(folderPath, exportFunction) {
+    if(arguments.length < 2) {
+        console.log(">> ERROR: folderPath and exportFunction must be defined");
+        return;
+    }
+
+    var timeScheduleMapObject = mapTimeScheduleDataToLocationFromFolder(folderPath);
+
+    exportFunction(timeScheduleMapObject);
+}
+
+/**
+ * 
+ * @param {*} filePath 
+ * @returns {*} - 
+ */
+function mapTimeScheduleDataToLocationFromFile(filePath) {
+    if (filePath === undefined || filePath == null || filePath == "") {
+        console.log(">> ERROR: filePath must be defined");
+        return null;
+    }
+
+    var timeScheduleData = ImportUtils.getJSONPropertyContentsFromFile(filePath, "data");
+
+    var finalTSLocationMapObject = mapTimeScheduleDataToLocation(timeScheduleData, {});
+
+    return finalTSLocationMapObject;
+}
+
+/**
+ * 
+ * @param {*} filePath 
+ * @param {*} exportFunction 
+ */
+function exportTimeScheduleDataMappedToLocationFromFile(filePath, exportFunction) {
+    if(arguments.length < 2) {
+        console.log(">> ERROR: filePath and exportFunction must be defined");
+        return;
+    }
+
+    var timeScheduleMapObject = mapTimeScheduleDataToLocationFromFile(filePath);
+
+    exportFunction(timeScheduleMapObject);
 }
 
 /**
@@ -92,6 +158,9 @@ function formatTimeScheduleCourseForLocationMap(course) {
 
 module.exports = {
     mapTimeScheduleDataToLocationFromFolder,
+    mapTimeScheduleDataToLocationFromFile,
     mapTimeScheduleDataToLocation,
+    exportTimeScheduleDataMappedToLocationFromFolder, 
+    exportTimeScheduleDataMappedToLocationFromFile,
     formatTimeScheduleCourseForLocationMap
 };
