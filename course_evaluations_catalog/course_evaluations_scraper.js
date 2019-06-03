@@ -18,14 +18,36 @@ const CEC_TABLE = "body > table";
 CEC page link text regex array results (by index):
 
 0 - Original string
-1 - title
-2 - alias
-3 - section
-4 - instructor
-5 - role
-6 - quarter
+1 - Title
+2 - Alias
+3 - Section
+4 - Instructor
+5 - Role
+6 - Quarter
 */
 const CEC_PAGE_LINK_INFO_REGEX = /([\w\W\s&]+?(?=\s[A-Z]+\s))\s([A-Z]\s[A-Z]\s\d+|[A-Z]+\s\d+)\s([A-Z\d]+)\s{2,}([A-Za-z\s\,\.\'\-]+)\s{2,}([A-za-z\s\-\.]+)\s{2,}([A-Z]+\d+)/;
+
+/*
+CEC page header regex array results (by index):
+
+0 - Original string
+1 - Department
+2 - Major (Part one)
+3 - Major (Part two)
+4 - Course alias
+5 - Course section
+*/
+const CEC_PAGE_HEADING_ONE_REGEX = /([\w\W\s&]+?)(\s[A-Z]\s|\s)([A-Z\s]+)\s(\d+)(\s[A-Z{1,3}|\s*])/;
+
+/*
+CEC page secondary header regex array (by index):
+
+0 - Original string
+1 - Instructor
+2 - Instructor profession
+3 - Quarter
+*/
+const CEC_PAGE_HEADING_TWO_REGEX = /([A-Za-z\'\-\.\s]+)\s{2,5}([A-Za-z\s]+)\s{2,5}([A-Z]+\d+)/;
 
 // Regex for matching a course's lecture type, surveyed students, and enrolled students
 const CEC_COURSE_TABLE_CAPTION_REGEX = new RegExp(/[A-Za-z\s]+\:([A-Za-z\s\-\/]+)\s{2,}\"(\d+)\"[a-z\s]+\"(\d+)\"[a-z\s]+/);
@@ -99,17 +121,26 @@ async function scrapeCECCoursePageLinks(page, url) {
  * @param {String} linkText - The CEC table of contents link's text with course information
  * @returns {Object} - A JavaScript Object representing a course evaluation
  */
-async function scrapeCECCoursePage(page, url, linkText) {
+async function scrapeCECCoursePage(page, url) {
     await BrowserUtils.navigateWithLoginCheck(page, url);
 
-    var course = await page.evaluate((sel, tableCaptionRegexSource, tableCaptionRegexFlags) => {
+    var course = await page.evaluate((sel, tableCaptionRegexSource, tableCaptionRegexFlags, cecPageHeaderRegexSource, cecPageHeaderRegexFlags, cecPageHeaderTwoRegexSource, cecPageHeaderTwoRegexFlags) => {
         /**
-         * Checks a string for being defined 
+         * Checks a string for being defined and replaces extra whitespace
          * @param {String} str - String captured by a course regex
          * @returns {String} - An empty string if the passed string is not valid, or the passed string with no extra whitespaces 
          */
         var checkRegex = function (str) {
-            return (str === undefined || str == null || str == " " ? "" : str.replace(/\s\s+/, " ").trim());
+            return checkRegexSimple(str).replace(/\s\s+/, " ").trim();
+        };
+
+        /**
+         * Checks a string for being defined, but does not replace extra whitespace
+         * @param {String} str - String captured by a course regex
+         * @returns {String} - An empty string if the passed string is not valid, or the passed string
+         */
+        var checkRegexSimple = function (str) {
+            return str === undefined || str == null || str == " " ? "" : str;
         };
 
         var course = {};
@@ -149,20 +180,38 @@ async function scrapeCECCoursePage(page, url, linkText) {
 
             return result;
         }, []);
+        
+        var cecPageHeader = document.querySelector("h1");
+        var cecPageSecondaryHeader = document.querySelector("h2");
+
+        if (cecPageHeader != undefined && cecPageHeader != null) {
+            cecPageHeader = cecPageHeader.textContent;
+
+            var cecPageHeaderRegexResult = new RegExp(cecPageHeaderRegexSource, cecPageHeaderRegexFlags).exec(cecPageHeader);
+
+            if (cecPageHeaderRegexResult != null) {
+                course["department"] = checkRegexSimple(cecPageHeaderRegexResult[1]);
+                course["major"] = (checkRegexSimple(cecPageHeaderRegexResult[2]) + " " + checkRegexSimple(cecPageHeaderRegexResult[3])).trim();
+
+                course["alias"] = checkRegexSimple(cecPageHeaderRegexResult[4]);
+                course["section"] = checkRegexSimple(cecPageHeaderRegexResult[5]);
+            }
+        }
+
+        if (cecPageSecondaryHeader != undefined && cecPageSecondaryHeader != null) {
+            cecPageSecondaryHeader = cecPageSecondaryHeader.textContent;
+
+            var cecPageHeaderTwoRegexResult = new RegExp(cecPageHeaderTwoRegexSource, cecPageHeaderTwoRegexFlags).exec(cecPageSecondaryHeader);
+
+            if (cecPageHeaderTwoRegexResult != null) {
+                course["instructor"] = checkRegexSimple(cecPageHeaderTwoRegexResult[1]);
+                course["instructorType"] = checkRegexSimple(cecPageHeaderTwoRegexResult[2]);
+                course["quarter"] = checkRegexSimple(cecPageHeaderTwoRegexResult[3]);
+            }
+        }
 
         return course;
-    }, CEC_TABLE, CEC_COURSE_TABLE_CAPTION_REGEX.source, CEC_COURSE_TABLE_CAPTION_REGEX.flags);
-
-    var pageLinkRegexResult = CEC_PAGE_LINK_INFO_REGEX.exec(linkText);
-
-    if (pageLinkRegexResult != null) {
-        course["title"] = checkRegexGroup(pageLinkRegexResult[1]);
-        course["alias"] = checkRegexGroup(pageLinkRegexResult[2]);
-        course["section"] = checkRegexGroup(pageLinkRegexResult[3]);
-        course["instructor"] = checkRegexGroup(pageLinkRegexResult[4]);
-        course["role"] = checkRegexGroup(pageLinkRegexResult[5]);
-        course["quarter"] = checkRegexGroup(pageLinkRegexResult[6]);
-    }
+    }, CEC_TABLE, CEC_COURSE_TABLE_CAPTION_REGEX.source, CEC_COURSE_TABLE_CAPTION_REGEX.flags, CEC_PAGE_HEADING_ONE_REGEX.source, CEC_PAGE_HEADING_ONE_REGEX.flags, CEC_PAGE_HEADING_TWO_REGEX.source, CEC_PAGE_HEADING_TWO_REGEX.flags);
 
     return course;
 }
@@ -213,7 +262,7 @@ async function scrapeCourseEvaluationsCatalog(page) {
 async function scrapeCourseEvaluationsCatalogContentsPage(page, url) {
     var coursePageLinks = await scrapeCECCoursePageLinks(page, url);
 
-    var majorMap = new Map();
+    var majorMap = {};
 
     var bar = new ProgressBar(':bar :current/:total', {
         total: coursePageLinks.length
@@ -222,20 +271,19 @@ async function scrapeCourseEvaluationsCatalogContentsPage(page, url) {
     for (let j = 0; j < coursePageLinks.length; j++) {
         bar.tick();
 
-        var course = await scrapeCECCoursePage(page, coursePageLinks[j]["link"], coursePageLinks[j]["text"]);
+        var course = await scrapeCECCoursePage(page, coursePageLinks[j]["link"]);
 
         var majorKey = checkRegexGroup(course["alias"].replace(/[0-9]/g, "").toLowerCase().trim());
 
         //
         if (majorKey != "") {
-            var majorValue = majorMap.get(majorKey);
+            if (course.hasOwnProperty("instructor") && course["instructor"] != "") {
+                if (!majorMap.hasOwnProperty(majorKey)) {
+                    majorMap[majorKey] = [];
+                }
 
-            if (majorValue == undefined) {
-                majorValue = [];
+                majorMap[majorKey].push(course);
             }
-
-            majorValue.push(course);
-            majorMap.set(majorKey, majorValue);
         }
         else {
             console.log(">> Could not read alias for course: ");
@@ -267,8 +315,8 @@ async function exportCourseEvaluationsCatalogByMajor(page, exportFunction) {
         var courseEvaluationsMap = await scrapeCourseEvaluationsCatalogContentsPage(page, cecTOCLinks[i]);
 
         // Export by major
-        for (var key of courseEvaluationsMap.keys()) {
-            exportFunction(key + ".json", courseEvaluationsMap.get(key));
+        for (var key of Object.keys(courseEvaluationsMap)) {
+            exportFunction(key + ".json", courseEvaluationsMap[key]);
         }
     }
 }

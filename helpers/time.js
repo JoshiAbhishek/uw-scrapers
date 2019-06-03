@@ -204,7 +204,7 @@ function createArrayOfDayAndTimeObjectsFromTemplate(dateTimeRange, templateObjec
 
     var daysAndTimes = addDayAndTimesToObject(dateTimeRange, {});
 
-    if(daysAndTimes == null) {
+    if (daysAndTimes == null) {
         return null;
     }
 
@@ -390,31 +390,31 @@ function convertTimeAndTimesOfDayToMilitaryTimeFormat(startTime, endTime, startT
 /**
  * 
  * @param {*} time 
- * @param {*} isAfterTwelve 
+ * @param {*} isAfterNoon 
  * @returns {*} -
  */
-function convertTimeToMilitaryTimeNumber(time, isAfterTwelve) {
-    if (time === undefined || time == null || time.length < 2 || isAfterTwelve === undefined || isAfterTwelve == null) {
-        return time;
+function convertTimeToMilitaryTimeNumber(time, isAfterNoon) {
+    if (time === undefined || time == null || time.length < 2 || isAfterNoon === undefined || isAfterNoon == null) {
+        return null;
     }
-
+    
     if (typeof time === "string") {
         time = time.replace(":", "");
     }
 
     var newTime = Number(time);
 
-    if (isAfterTwelve) {
+    if (isAfterNoon) {
         if (time.length < 3) {
             newTime = newTime * 100;
         }
 
-        if (!time.startsWith("12")) {
+        if (timeStartsAfterTweleve(time)) {
             newTime += 1200;
         }
     }
     else {
-        if (time.startsWith("12")) {
+        if (!timeStartsAfterTweleve(time)) {
             if (time.length < 3) {
                 newTime = 0;
             }

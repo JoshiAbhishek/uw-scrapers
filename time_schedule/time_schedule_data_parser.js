@@ -24,11 +24,11 @@ function mapTimeScheduleDataToLocationFromFolder(folderPath) {
     var bar = new ProgressBar(':bar :current/:total', {
         total: fileNames.length
     });
-    
+
     for (let i = 0; i < fileNames.length; i++) {
         bar.tick();
 
-        var timeScheduleData = ImportUtils.getJSONPropertyContentsFromFile(fileNames[i], "data");
+        var timeScheduleData = ImportUtils.getJSONPropertyContentsFromFile(folderPath + fileNames[i], "data");
 
         finalTSLocationMapObject = mapTimeScheduleDataToLocation(timeScheduleData, finalTSLocationMapObject);
     }
@@ -105,6 +105,10 @@ function mapTimeScheduleDataToLocation(timeScheduleData, finalObject) {
         var expandedObjects = ParserUtils.getExpandedObjectsArrayFromRelatedArrayProperties(timeScheduleData[i], ["time", "location", "instructor"]);
 
         for (let j = 0; j < expandedObjects.length; j++) {
+            if (expandedObjects[j]["location"] === undefined || expandedObjects[j]["time"] === undefined || expandedObjects[j]["location"] == null || expandedObjects[j]["time"] == null || expandedObjects[j]["location"].length < 1 || expandedObjects[j]["time"].length < 1) {
+                continue;
+            }
+
             var locationSplit = expandedObjects[j]["location"].split(" ");
 
             if (locationSplit == null || locationSplit.length < 2) {
@@ -154,7 +158,7 @@ function mapTimeScheduleDataToLocation(timeScheduleData, finalObject) {
                         }
                     }
 
-                    if(!duplicateStartOrEndTime) {
+                    if (!duplicateStartOrEndTime) {
                         finalObject[building][room][day].push(formatTimeScheduleCourseForLocationMap(objectsByDay[k]));
                     }
                 }
