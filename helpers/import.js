@@ -4,8 +4,8 @@ const FS = require('fs');
 
 /**
  * 
- * @param {*} folderPath 
- * @returns {*} - 
+ * @param {String} folderPath 
+ * @returns {String[]} - 
  */
 function getFileNamesInFolder(folderPath) {
     if(folderPath === undefined || folderPath == null || folderPath == "") {
@@ -20,8 +20,8 @@ function getFileNamesInFolder(folderPath) {
 
 /**
  * 
- * @param {*} filePath 
- * @param {*} propertyName 
+ * @param {String} filePath 
+ * @param {String} propertyName 
  * @returns {*} - 
  */
 function getJSONPropertyContentsFromFile(filePath, propertyName) {

@@ -8,8 +8,8 @@ const TimeUtils = require("../helpers/time.js");
 
 /**
  * 
- * @param {*} folderPath 
- * @returns {*} - 
+ * @param {String} folderPath 
+ * @returns {Object} - 
  */
 function mapTimeScheduleDataToLocationFromFolder(folderPath) {
     if (folderPath === undefined || folderPath == null || folderPath == "") {
@@ -38,8 +38,8 @@ function mapTimeScheduleDataToLocationFromFolder(folderPath) {
 
 /**
  * 
- * @param {*} folderPath 
- * @param {*} exportFunction 
+ * @param {String} folderPath 
+ * @param {Function} exportFunction 
  */
 function exportTimeScheduleDataMappedToLocationFromFolder(folderPath, exportFunction) {
     if (arguments.length < 2) {
@@ -54,8 +54,8 @@ function exportTimeScheduleDataMappedToLocationFromFolder(folderPath, exportFunc
 
 /**
  * 
- * @param {*} filePath 
- * @returns {*} - 
+ * @param {String} filePath 
+ * @returns {Function} - 
  */
 function mapTimeScheduleDataToLocationFromFile(filePath) {
     if (filePath === undefined || filePath == null || filePath == "") {
@@ -72,8 +72,8 @@ function mapTimeScheduleDataToLocationFromFile(filePath) {
 
 /**
  * 
- * @param {*} filePath 
- * @param {*} exportFunction 
+ * @param {String} filePath 
+ * @param {Function} exportFunction 
  */
 function exportTimeScheduleDataMappedToLocationFromFile(filePath, exportFunction) {
     if (arguments.length < 2) {
@@ -88,9 +88,9 @@ function exportTimeScheduleDataMappedToLocationFromFile(filePath, exportFunction
 
 /**
  * 
- * @param {*} timeScheduleData 
- * @param {*} finalObject 
- * @returns {*} - 
+ * @param {Object[]} timeScheduleData 
+ * @param {Object} finalObject 
+ * @returns {Object} - 
  */
 function mapTimeScheduleDataToLocation(timeScheduleData, finalObject) {
     if (timeScheduleData === undefined || timeScheduleData == null) {
@@ -100,7 +100,7 @@ function mapTimeScheduleDataToLocation(timeScheduleData, finalObject) {
     if (finalObject === undefined || finalObject == null) {
         finalObject = {};
     }
-
+    
     for (let i = 0; i < timeScheduleData.length; i++) {
         var expandedObjects = ParserUtils.getExpandedObjectsArrayFromRelatedArrayProperties(timeScheduleData[i], ["time", "location", "instructor"]);
 
@@ -171,7 +171,8 @@ function mapTimeScheduleDataToLocation(timeScheduleData, finalObject) {
 
 /**
  * 
- * @param {*} course 
+ * @param {Object} course 
+ * @returns {Object} - 
  */
 function formatTimeScheduleCourseForLocationMap(course) {
     var temp = {};

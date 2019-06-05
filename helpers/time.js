@@ -101,9 +101,9 @@ function getFullDayNameFromAbbreviation(day) {
 
 /**
  * 
- * @param {*} dateTimeRange 
- * @param {*} finalObject 
- * @returns {*} - 
+ * @param {String} dateTimeRange 
+ * @param {Object} finalObject 
+ * @returns {Object} - 
  */
 function addDayAndTimesToObject(dateTimeRange, finalObject) {
     if (dateTimeRange === undefined || dateTimeRange == null) {
@@ -189,9 +189,9 @@ function addDayAndTimesToObject(dateTimeRange, finalObject) {
 
 /**
  * 
- * @param {*} dateTimeRange 
- * @param {*} templateObject 
- * @returns {*} - 
+ * @param {String} dateTimeRange 
+ * @param {Object} templateObject 
+ * @returns {Object[]} - 
  */
 function createArrayOfDayAndTimeObjectsFromTemplate(dateTimeRange, templateObject) {
     if (dateTimeRange === undefined || dateTimeRange == null) {
@@ -229,8 +229,8 @@ function createArrayOfDayAndTimeObjectsFromTemplate(dateTimeRange, templateObjec
 
 /**
  * 
- * @param {*} timeRange 
- * @returns {*} - 
+ * @param {String} timeRange 
+ * @returns {Object} - 
  */
 function convertTimeRangeToMilitaryTimeFormat(timeRange) {
     if (timeRange === undefined || timeRange == null) {
@@ -260,20 +260,20 @@ function convertTimeRangeToMilitaryTimeFormat(timeRange) {
 
 /**
  * 
- * @param {*} time
- * @returns {*} -  
+ * @param {String} time
+ * @returns {Boolean} -  
  */
-function timeStartsAfterTweleve(time) {
-    return !time.toLowerCase().startsWith("12") || (time.toLowerCase().startsWith("12") && time.length < 3);
+function timeHourIsNotTwelve(time) {
+    return !time.toLowerCase().startsWith("12") || (time.toLowerCase().startsWith("12") && time.length < 4);
 }
 
 /**
  * 
- * @param {*} startTime 
- * @param {*} endTime 
- * @param {*} startTimeOfDay 
- * @param {*} endTimeOfDay 
- * @returns {*} - 
+ * @param {String} startTime 
+ * @param {String} endTime 
+ * @param {String} startTimeOfDay 
+ * @param {String} endTimeOfDay 
+ * @returns {Object} - 
  */
 function convertTimeAndTimesOfDayToMilitaryTimeFormat(startTime, endTime, startTimeOfDay, endTimeOfDay) {
     if (arguments.length < 4) {
@@ -311,17 +311,17 @@ function convertTimeAndTimesOfDayToMilitaryTimeFormat(startTime, endTime, startT
 
     if (startTimeOfDay.toLowerCase().startsWith("a")) {
         if (endTimeOfDay.toLowerCase().startsWith("p")) {
-            if (timeStartsAfterTweleve(endTime)) {
+            if (timeHourIsNotTwelve(endTime)) {
                 endTimeNum += 1200;
             }
         }
         else {
-            if (timeStartsAfterTweleve(endTime)) {
+            if (!timeHourIsNotTwelve(endTime)) {
                 endTimeNum %= 100;
             }
         }
 
-        if (timeStartsAfterTweleve(startTime)) {
+        if (!timeHourIsNotTwelve(startTime)) {
             startTimeNum %= 100;
         }
     }
@@ -335,39 +335,34 @@ function convertTimeAndTimesOfDayToMilitaryTimeFormat(startTime, endTime, startT
             return null;
         }
 
-        if (timeStartsAfterTweleve(startTime)) {
+        if (timeHourIsNotTwelve(startTime)) {
             startTimeNum += 1200;
         }
 
-        if (timeStartsAfterTweleve(endTime)) {
+        if (timeHourIsNotTwelve(endTime)) {
             endTimeNum += 1200;
         }
     }
     else {
         if (endTimeOfDay.toLowerCase().startsWith("p")) {
             // Assume that start time is in the morning if it is larger than the end time
-            if (startTimeNum < endTimeNum && timeStartsAfterTweleve(startTime)) {
+            if (startTimeNum < endTimeNum && timeHourIsNotTwelve(startTime)) {
                 startTimeNum += 1200;
             }
-
-            if (timeStartsAfterTweleve(endTime)) {
+            
+            if (timeHourIsNotTwelve(endTime)) {
                 endTimeNum += 1200;
             }
         }
         else if (!endTimeOfDay.toLowerCase().startsWith("a")) {
-            // Assume that start time is in the morning if it is larger than the end time
-            if (startTimeNum > endTimeNum || timeStartsAfterTweleve(endTime)) {
+            // Assume that start time is in the morning if it is larger than the end time, with end time in the evening
+            if (startTimeNum > endTimeNum && timeHourIsNotTwelve(endTime)) {
                 endTimeNum += 1200;
             }
-            else if (startTimeNum < 430) {
-                // Assume that both start and end time are in the afternoon if the start is before 4:30
-                if (timeStartsAfterTweleve(startTime)) {
-                    startTimeNum += 1200;
-                }
-
-                if (timeStartsAfterTweleve(endTime)) {
-                    endTimeNum += 1200;
-                }
+            else if (startTimeNum < 430 && endTimeNum < 430) {
+                // Assume that both start and end time are in the afternoon if both are before 4:30
+                startTimeNum += 1200;
+                endTimeNum += 1200;
             }
         }
     }
@@ -389,15 +384,15 @@ function convertTimeAndTimesOfDayToMilitaryTimeFormat(startTime, endTime, startT
 
 /**
  * 
- * @param {*} time 
- * @param {*} isAfterNoon 
- * @returns {*} -
+ * @param {String} time 
+ * @param {Boolean} isAfterNoon 
+ * @returns {Number} -
  */
 function convertTimeToMilitaryTimeNumber(time, isAfterNoon) {
     if (time === undefined || time == null || time.length < 2 || isAfterNoon === undefined || isAfterNoon == null) {
         return null;
     }
-    
+
     if (typeof time === "string") {
         time = time.replace(":", "");
     }
@@ -409,12 +404,12 @@ function convertTimeToMilitaryTimeNumber(time, isAfterNoon) {
             newTime = newTime * 100;
         }
 
-        if (timeStartsAfterTweleve(time)) {
+        if (timeHourIsNotTwelve(time)) {
             newTime += 1200;
         }
     }
     else {
-        if (!timeStartsAfterTweleve(time)) {
+        if (!timeHourIsNotTwelve(time)) {
             if (time.length < 3) {
                 newTime = 0;
             }

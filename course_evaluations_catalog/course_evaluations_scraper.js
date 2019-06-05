@@ -180,7 +180,7 @@ async function scrapeCECCoursePage(page, url) {
 
             return result;
         }, []);
-        
+
         var cecPageHeader = document.querySelector("h1");
         var cecPageSecondaryHeader = document.querySelector("h2");
 
@@ -245,7 +245,7 @@ async function scrapeCourseEvaluationsCatalog(page) {
     for (let j = 0; j < coursePageLinks.length; j++) {
         bar.tick();
 
-        var course = await scrapeCECCoursePage(page, coursePageLinks[j]["link"], coursePageLinks[j]["text"]);
+        var course = await scrapeCECCoursePage(page, coursePageLinks[j]["link"]);
 
         courses.push(course);
     }

@@ -2,8 +2,8 @@
 
 /**
  * 
- * @param {*} captureGroup 
- * @returns {*} -
+ * @param {String} captureGroup 
+ * @returns {Boolean} -
  */
 function regexCaputureGroupHasContent(captureGroup) {
     return captureGroup != undefined && captureGroup != null && captureGroup != "" && captureGroup != " ";
@@ -11,10 +11,10 @@ function regexCaputureGroupHasContent(captureGroup) {
 
 /**
  * 
- * @param {*} captureGroupsArray 
- * @param {*} startIndex 
- * @param {*} endIndex 
- * @returns {*} -
+ * @param {String[]} captureGroupsArray 
+ * @param {Number} startIndex 
+ * @param {Number} endIndex 
+ * @returns {Boolean} -
  */
 function multipleRegexCaptureGroupsHaveContent(captureGroupsArray, startIndex, endIndex) {
     if(startIndex > endIndex || endIndex > captureGroupsArray.length - 1) {
@@ -32,11 +32,11 @@ function multipleRegexCaptureGroupsHaveContent(captureGroupsArray, startIndex, e
 
 /**
  * 
- * @param {*} objectArray 
- * @param {*} finalObject 
- * @param {*} propertyName 
- * @param {*} customValueParser 
- * @returns {*} -  
+ * @param {Object[]} objectArray 
+ * @param {Object} finalObject 
+ * @param {String} propertyName 
+ * @param {Function} customValueParser 
+ * @returns {Object} -  
  */
 function groupObjectsByAProperty(objectArray, finalObject, propertyName, customValueParser) {
     if (objectArray === undefined || objectArray == null || objectArray.length < 1) {
@@ -69,12 +69,12 @@ function groupObjectsByAProperty(objectArray, finalObject, propertyName, customV
 
 /**
  * 
- * @param {*} objectArray 
- * @param {*} finalObject 
- * @param {*} propertyName 
- * @param {*} relatedProperties 
- * @param {*} customValueParser 
- * @returns {*} -  
+ * @param {Object[]} objectArray 
+ * @param {Object} finalObject 
+ * @param {String} propertyName 
+ * @param {String[]} relatedProperties
+ * @param {Function} customValueParser 
+ * @returns {Object} -  
  */
 function groupObjectsWithRelatedArrayPropertiesByAProperty(objectArray, finalObject, propertyName, relatedProperties, customValueParser) {
     if (objectArray === undefined || objectArray == null || objectArray.length < 1 || propertyName === undefined || propertyName == null || relatedProperties === undefined || relatedProperties == null) {
@@ -127,9 +127,9 @@ function groupObjectsWithRelatedArrayPropertiesByAProperty(objectArray, finalObj
 
 /**
  * 
- * @param {*} object 
- * @param {*} relatedProperties 
- * @param {*} ignoreNullAndEmpty 
+ * @param {Object} object 
+ * @param {String[]} relatedProperties 
+ * @param {Boolean} ignoreNullAndEmpty 
  * @returns {Boolean} -
  */
 function checkRelatedPropertiesLengths(object, relatedProperties, ignoreNullAndEmpty) {
@@ -162,9 +162,9 @@ function checkRelatedPropertiesLengths(object, relatedProperties, ignoreNullAndE
 
 /**
  * 
- * @param {*} object 
- * @param {*} relatedProperties 
- * @returns {*} - 
+ * @param {Object} object 
+ * @param {String[]} relatedProperties 
+ * @returns {Number} - 
  */
 function getMaxRelatedPropertiesLength(object, relatedProperties) {
     var length = 0;
@@ -182,9 +182,9 @@ function getMaxRelatedPropertiesLength(object, relatedProperties) {
 
 /**
  * 
- * @param {*} objectArray 
- * @param {*} relatedProperties 
- * @param {*} customValueParser 
+ * @param {Object[]} objectArray 
+ * @param {String[]} relatedProperties 
+ * @param {Function} customValueParser 
  * @returns {Object[]} -  
  */
 function expandObjectArrayByRelatedArrayProperties(objectArray, relatedProperties, customValueParser) {
@@ -235,9 +235,9 @@ function expandObjectArrayByRelatedArrayProperties(objectArray, relatedPropertie
 
 /**
  * 
- * @param {*} object 
- * @param {*} relatedProperties 
- * @param {*} customValueParser 
+ * @param {Object} object 
+ * @param {String[]} relatedProperties 
+ * @param {Function} customValueParser 
  * @returns {Object[]} -  
  */
 function getExpandedObjectsArrayFromRelatedArrayProperties(currentObject, relatedProperties, customValueParser) {
