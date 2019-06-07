@@ -22,7 +22,7 @@
 ## Parsers
 
 **Time Schedule Data**
-* Groups the scraped UW Time Schedule data by building, room, and day of the week to be used by the [uw-room-hours](https://github.com/JoshiAbhishek/uw-room-hours) tool
+* Groups the scraped UW Time Schedule data by building, room, and day of the week to be used by the **[uw-room-hours]**(https://github.com/JoshiAbhishek/uw-room-hours) tool
 
 **Course Evaluations Catalog Data**
 * Flattens the scraped Course Evaluations Catalog data to be used for data analysis
@@ -44,7 +44,7 @@
 ## Installation
 
 **Install Node Modules**
-(You may need to install the puppeteer package separately: `npm install puppeteer`)
+* (You may need to install the puppeteer package separately: `npm install puppeteer`)
 
 ```javascript
 npm install
