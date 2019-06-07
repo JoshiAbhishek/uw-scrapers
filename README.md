@@ -21,29 +21,30 @@
 
 ## Parsers
 
-**Time Schedule Building Hours**
-* 
+**Time Schedule Data**
+* Groups the scraped UW Time Schedule data by building, room, and day of the week to be used by the [uw-room-hours](https://github.com/JoshiAbhishek/uw-room-hours) tool
 
-**Course Evaluations Catalog Data Analysis**
-* 
+**Course Evaluations Catalog Data**
+* Flattens the scraped Course Evaluations Catalog data to be used for data analysis
 
 ## Utilities 
 
 **Parsing**
-*
+* Functions for grouping arrays of objects by their properties or expanding objects by related array properties
 
 **Export Data**
-*
+* Functions for exporting objects and arrays of objects
 
 **Import Data**
-* 
+* Functions for reading property values of JSON files
 
 **Browser Navigation**
-* 
+* Functions for navigating to pages with the puppeteer browser instance
 
 ## Installation
 
 **Install Node Modules**
+(You may need to install the puppeteer package separately: `npm install puppeteer`)
 
 ```javascript
 npm install
