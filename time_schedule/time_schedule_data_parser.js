@@ -182,6 +182,7 @@ function formatTimeScheduleCourseForLocationMap(course) {
     temp["title"] = course["title"];
     temp["startTime"] = course["startTime"];
     temp["endTime"] = course["endTime"];
+    temp["catalogURL"] = course["catalogURL"];
 
     return temp;
 }

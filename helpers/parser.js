@@ -1,20 +1,20 @@
 "use strict";
 
 /**
- * 
- * @param {String} captureGroup 
- * @returns {Boolean} -
+ * Checks whether a regular expression capture group is defined, not null, and not empty
+ * @param {String} captureGroup - A capture group from executing a regular expression
+ * @returns {Boolean} - Indicates whether the given capture group is defined, not null, and not empty
  */
 function regexCaputureGroupHasContent(captureGroup) {
     return captureGroup != undefined && captureGroup != null && captureGroup != "" && captureGroup != " ";
 }
 
 /**
- * 
- * @param {String[]} captureGroupsArray 
- * @param {Number} startIndex 
- * @param {Number} endIndex 
- * @returns {Boolean} -
+ * Checks whether all capture groups of a regular expression are defined, not null, and not empty
+ * @param {String[]} captureGroupsArray - The capture group array from executing a regular expression
+ * @param {Number} startIndex - The start index of the range of the given capture group array to check
+ * @param {Number} endIndex - The end index of the range of the given capture group array to check
+ * @returns {Boolean} - Indicates whether all capture groups of the array are defined, not null, and not empty
  */
 function multipleRegexCaptureGroupsHaveContent(captureGroupsArray, startIndex, endIndex) {
     if(startIndex > endIndex || endIndex > captureGroupsArray.length - 1) {
@@ -31,12 +31,12 @@ function multipleRegexCaptureGroupsHaveContent(captureGroupsArray, startIndex, e
 }
 
 /**
- * 
- * @param {Object[]} objectArray 
- * @param {Object} finalObject 
- * @param {String} propertyName 
- * @param {Function} customValueParser 
- * @returns {Object} -  
+ * Groups objects by the distinct values of one of their shared properties in to corresponding properties of a single object
+ * @param {Object[]} objectArray - The array of objects to be grouped by the distinct values of one of their shared properties
+ * @param {Object} finalObject - The final object to add the distinct values of the given objects' shared property as properties
+ * @param {String} propertyName - The name of the shared property to group the given array of objects by
+ * @param {Function} customValueParser - A custom function to parse the grouped objects
+ * @returns {Object} - An object with the given array of objects grouped by properties derived from the distinct values of one of their shared properties
  */
 function groupObjectsByAProperty(objectArray, finalObject, propertyName, customValueParser) {
     if (objectArray === undefined || objectArray == null || objectArray.length < 1) {
@@ -68,13 +68,13 @@ function groupObjectsByAProperty(objectArray, finalObject, propertyName, customV
 }
 
 /**
- * 
- * @param {Object[]} objectArray 
- * @param {Object} finalObject 
- * @param {String} propertyName 
- * @param {String[]} relatedProperties
- * @param {Function} customValueParser 
- * @returns {Object} -  
+ * Groups objects that have incremental index-linked array property values by the distinct values of one of their shared properties in to corresponding properties of a single object
+ * @param {Object[]} objectArray - The array of objects to be grouped by the distinct values of one of their shared properties
+ * @param {Object} finalObject - The final object to add the distinct values of the given objects' shared property as properties
+ * @param {String} propertyName - The name of the shared property to group the given array of objects by
+ * @param {String[]} relatedProperties - The names of the shared array properties of the given objects that have incremental index-linked values
+ * @param {Function} customValueParser - A custom function to parse the grouped objects
+ * @returns {Object} - An object with the given array of objects grouped by properties derived from the distinct values of one of their shared properties
  */
 function groupObjectsWithRelatedArrayPropertiesByAProperty(objectArray, finalObject, propertyName, relatedProperties, customValueParser) {
     if (objectArray === undefined || objectArray == null || objectArray.length < 1 || propertyName === undefined || propertyName == null || relatedProperties === undefined || relatedProperties == null) {
@@ -126,11 +126,11 @@ function groupObjectsWithRelatedArrayPropertiesByAProperty(objectArray, finalObj
 }
 
 /**
- * 
- * @param {Object} object 
- * @param {String[]} relatedProperties 
- * @param {Boolean} ignoreNullAndEmpty 
- * @returns {Boolean} -
+ * Checks whether all related array properties on an object have the same length
+ * @param {Object} object - An object of a collection of objects that have shared array properties
+ * @param {String[]} relatedProperties - The names of the shared array properties of the given objects that have incremental index-linked values
+ * @param {Boolean} ignoreNullAndEmpty - Indicates whether empty or null related array properties should be ignored or not
+ * @returns {Boolean} - Indicates whether all related array properties on an object have the same length
  */
 function checkRelatedPropertiesLengths(object, relatedProperties, ignoreNullAndEmpty) {
     var length = -1;
@@ -161,10 +161,10 @@ function checkRelatedPropertiesLengths(object, relatedProperties, ignoreNullAndE
 }
 
 /**
- * 
- * @param {Object} object 
- * @param {String[]} relatedProperties 
- * @returns {Number} - 
+ * Returns the maximum length of related array properties of an object
+ * @param {Object} object - An object of a collection of objects that have shared array properties
+ * @param {String[]} relatedProperties - The names of the shared array properties of the given objects that have incremental index-linked values
+ * @returns {Number} - Returns the maximum length of related array properties of an object
  */
 function getMaxRelatedPropertiesLength(object, relatedProperties) {
     var length = 0;
@@ -181,11 +181,11 @@ function getMaxRelatedPropertiesLength(object, relatedProperties) {
 }
 
 /**
- * 
- * @param {Object[]} objectArray 
- * @param {String[]} relatedProperties 
- * @param {Function} customValueParser 
- * @returns {Object[]} -  
+ * Expands a collection of objects by their shared array properties
+ * @param {Object[]} objectArray - The collection of objects to be expanded by their shared array properties 
+ * @param {String[]} relatedProperties - The names of the shared array properties of the given objects that have incremental index-linked values
+ * @param {Function} customValueParser - A custom function to parse the given objects
+ * @returns {Object[]} - The given collection of objects expanded by their shared array properties
  */
 function expandObjectArrayByRelatedArrayProperties(objectArray, relatedProperties, customValueParser) {
     if (objectArray === undefined || objectArray == null || objectArray.length < 1 || relatedProperties === undefined || relatedProperties == null) {
@@ -234,11 +234,11 @@ function expandObjectArrayByRelatedArrayProperties(objectArray, relatedPropertie
 }
 
 /**
- * 
- * @param {Object} object 
- * @param {String[]} relatedProperties 
- * @param {Function} customValueParser 
- * @returns {Object[]} -  
+ * Creates copies of an object by each incremental set of values of the related array properties 
+ * @param {Object} object - An object of a collection of objects with shared array properties to be expanded by each incremental set of values of the related array properties 
+ * @param {String[]} relatedProperties - The names of the shared array properties of the given objects that have incremental index-linked values
+ * @param {Function} customValueParser - A custom function to parse the given objects
+ * @returns {Object[]} - Copies of the given object, specified by each incremental set of values of the related array properties 
  */
 function getExpandedObjectsArrayFromRelatedArrayProperties(currentObject, relatedProperties, customValueParser) {
     if (currentObject === undefined || currentObject == null || relatedProperties === undefined || relatedProperties == null) {

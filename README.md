@@ -19,6 +19,28 @@
 **Majors Information**  
 * In Development
 
+## Parsers
+
+**Time Schedule Building Hours**
+* 
+
+**Course Evaluations Catalog Data Analysis**
+* 
+
+## Utilities 
+
+**Parsing**
+*
+
+**Export Data**
+*
+
+**Import Data**
+* 
+
+**Browser Navigation**
+* 
+
 ## Installation
 
 **Install Node Modules**
@@ -28,10 +50,10 @@ npm install
 ```
 
 **Create exported data directory**  
-* Create any other exported data directories
+* Add a "data" folder to the repository and create any other exported data directories (as referenced by the scraper and parser functions)
 
-**Create creds.js File**  
-* Used for UW NetID login, depending on the scraper functions called
+**Create creds.js file (Optional)**  
+* Create the creds.js file and add your UW NetID login information which is used depending on the scraper functions called (the default Time Schedule scraper does not use the file)
 
 ```javascript
 var username = '';
@@ -41,8 +63,10 @@ exports.username = username;
 exports.password = password;
 ```
 
+**Add scraper / parser functions**
+* Call the scraper and parser functions needed for retrieving and formatting any catalog data
+
 **Run index.js**  
-* Add calls to scrapers 
 
 ```javascript
 node index.js
@@ -81,11 +105,14 @@ Development Checklist:
 - [x] Course Catalog Scraper
 - [x] Time Schedule Scraper
 - [x] Course Evaluations Catalog Scraper
-- [ ] Export to CSV, Export data as property maps
+- [x] Parsers for mapping object properties
+- [x] Time Schedule parser for [uw-room-hours](https://github.com/JoshiAbhishek/uw-room-hours)
+- [ ] Course Evaluations Catalog parser for data analysis 
+- [ ] Export to CSV
 - [ ] Major Information Scraper
 
 ## Terms & License
 
-This software is provided as is, with no guarantees of functionality. You assume liability for any of your own usage, modification, and / or distribution of any portion of this software. Any such actions relating to this software should comply with relevant laws and policies, including appropriate use of University of Washington services and data, as defined by Washington State and the [University of Washington](https://itconnect.uw.edu/work/appropriate-use/).
+This software is provided as is, with no guarantees of functionality. You assume full liability for any of your own usage, modification, and distribution of any portion of this software. All such actions relating to this software should comply with relevant laws and policies, including appropriate use of University of Washington services and data as defined by Washington State and the [University of Washington](https://itconnect.uw.edu/work/appropriate-use/).
 
 Licensed under the [GNU](./LICENSE) license. 

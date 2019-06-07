@@ -273,7 +273,9 @@ async function scrapeCourseEvaluationsCatalogContentsPage(page, url) {
 
         var course = await scrapeCECCoursePage(page, coursePageLinks[j]["link"]);
 
-        var majorKey = checkRegexGroup(course["alias"].replace(/[0-9]/g, "").toLowerCase().trim());
+        //var majorKey = checkRegexGroup(course["alias"].replace(/[0-9]/g, "").toLowerCase().trim());
+        
+        var majorKey = course["major"].toLowerCase().replace(/\s+/g, "").trim();
 
         //
         if (majorKey != "") {

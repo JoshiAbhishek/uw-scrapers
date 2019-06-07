@@ -8,6 +8,7 @@ const BuildingInfoScraper = require("./building_info/building_info_scraper.js");
 const TimeScheduleScraper = require("./time_schedule/time_schedule_scraper.js");
 const CourseCatalogScraper = require("./course_catalog/course_catalog_scraper.js");
 const CourseEvaluationsCatalogScraper = require("./course_evaluations_catalog/course_evaluations_scraper.js");
+
 const TimeScheduleDataParser = require("./time_schedule/time_schedule_data_parser.js");
 
 const DATA_EXPORT_BASE_URL = Path.join(__dirname, "./data/");
@@ -31,11 +32,11 @@ const DATA_EXPORT_BASE_URL = Path.join(__dirname, "./data/");
         });
         */
 
-        /*
-        // Expose the extractCourseInfo function for use in the Puppeteer page instance
+        // Expose the extractCourseInfo function for use in the Puppeteer page instance by the Time Schedule scraper
         await mainPage.exposeFunction("extractCourseInfo", TimeScheduleScraper.extractCourseInfo);
-
+        
         // Scrape and export UW Time Schedule information by major for a quarter
+        /*
         await TimeScheduleScraper.exportCoursesByMajorAndQuarter(mainPage, "SPR2019", function(file_name, data) {
             ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "SPR2019/", file_name, "data", data);
         });

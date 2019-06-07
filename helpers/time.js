@@ -3,6 +3,7 @@
 const ParserUtils = require("./parser.js");
 
 /*
+Simple day of week and time range regex array results (by index): 
 
 0 - Original string
 1 - Days
@@ -13,7 +14,9 @@ const ParserUtils = require("./parser.js");
 const simpleDayAndTimeOfWeekRegex = new RegExp(/([A-Za-z\.]+)\s(\d+)\-(\d+)([P]*)/);
 
 /*
-Replace midnight with 11:59pm and replace colons with nothing
+Full day of week and time range regex array results (by index): 
+
+*Requires replacing "midnight" with "11:59pm" and replacing colons with nothing
 
 0 - Original string
 1 - Days (if null, assume all days of the week)
@@ -25,7 +28,9 @@ Replace midnight with 11:59pm and replace colons with nothing
 const fullDayAndTimeOfWeekRegex = new RegExp(/([A-Za-z\-\.]+|\s*)\s*(\d+)(\s?[AamMpP\.]{1,5}|\s*)\-(\d+)(\s?[AamMpP\.]{1,5}|\s*)/);
 
 /*
-Replace midnight with 11:59pm and replace colons with nothing
+Time range regex array results (by index): 
+
+*Requires replacing "midnight" with "11:59pm" and replacing colons with nothing
 
 0 - Original string
 1 - Start time
@@ -35,7 +40,7 @@ Replace midnight with 11:59pm and replace colons with nothing
 */
 const timeOfDayRegex = new RegExp(/(\d+)(\s?[AamMpP\.]{1,5}|\s*)\-(\d+)(\s?[AamMpP\.]{1,5}|\s*)/);
 
-//
+// Regex to split a string by each capitalized day of the week
 const dayOfWeekSplitRegex = new RegExp(/(?=[A-Z])/, "g");
 
 // Enum for converting days of the week as names to corresponding numbers (starting at 1 for Monday)
@@ -100,10 +105,10 @@ function getFullDayNameFromAbbreviation(day) {
 }
 
 /**
- * 
- * @param {String} dateTimeRange 
- * @param {Object} finalObject 
- * @returns {Object} - 
+ * Adds objects with start and end times to days of the week properties of the given object
+ * @param {String} dateTimeRange - A range or group of days of the week with a time range
+ * @param {Object} finalObject - The object to have objects with timings added by days of the week properties
+ * @returns {Object} - The given object with days of the week properties added to it, with corresponding arrays of objects containing start and end times
  */
 function addDayAndTimesToObject(dateTimeRange, finalObject) {
     if (dateTimeRange === undefined || dateTimeRange == null) {
@@ -188,10 +193,10 @@ function addDayAndTimesToObject(dateTimeRange, finalObject) {
 }
 
 /**
- * 
- * @param {String} dateTimeRange 
- * @param {Object} templateObject 
- * @returns {Object[]} - 
+ * Creates an array of objects, distinguished by day of the week, with start and end times added to a template object
+ * @param {String} dateTimeRange - A range or group of days of the week with a time range
+ * @param {Object} templateObject - The object to copy and add 24-hour formatted start and end times to from the given time range, for each day in the range
+ * @returns {Object[]} - An array of objects, based on the given template, for each day in the given time range with its start and end times
  */
 function createArrayOfDayAndTimeObjectsFromTemplate(dateTimeRange, templateObject) {
     if (dateTimeRange === undefined || dateTimeRange == null) {
@@ -228,9 +233,9 @@ function createArrayOfDayAndTimeObjectsFromTemplate(dateTimeRange, templateObjec
 }
 
 /**
- * 
- * @param {String} timeRange 
- * @returns {Object} - 
+ * Converts a time range in to an object with 24-hour format start and end times
+ * @param {String} timeRange - A time range with start and end times, and possibly the time of day for both
+ * @returns {Object} - An object representing the given time range with start and end times in a 24 hour format
  */
 function convertTimeRangeToMilitaryTimeFormat(timeRange) {
     if (timeRange === undefined || timeRange == null) {
@@ -259,21 +264,21 @@ function convertTimeRangeToMilitaryTimeFormat(timeRange) {
 }
 
 /**
- * 
- * @param {String} time
- * @returns {Boolean} -  
+ * Checks if a time has the hour of 12, regardless of time of day
+ * @param {String} time - A time of day, without a separating colon for hour and minutes
+ * @returns {Boolean} -  Whether the given time has the hour of 12, regardless of time of day
  */
 function timeHourIsNotTwelve(time) {
     return !time.toLowerCase().startsWith("12") || (time.toLowerCase().startsWith("12") && time.length < 4);
 }
 
 /**
- * 
- * @param {String} startTime 
- * @param {String} endTime 
- * @param {String} startTimeOfDay 
- * @param {String} endTimeOfDay 
- * @returns {Object} - 
+ * Creates an object representing the given time range with start and end times in a 24 hour format
+ * @param {String} startTime - The start time of a time range to be converted to a 24 hour time format
+ * @param {String} endTime - The end time of a time range to be converted to a 24 hour time format
+ * @param {String} startTimeOfDay - The time of day (pm or am) of the given start time
+ * @param {String} endTimeOfDay - The time of day (pm or am) of the given end time
+ * @returns {Object} - An object representing the given time range with start and end times in a 24 hour format
  */
 function convertTimeAndTimesOfDayToMilitaryTimeFormat(startTime, endTime, startTimeOfDay, endTimeOfDay) {
     if (arguments.length < 4) {
@@ -359,8 +364,8 @@ function convertTimeAndTimesOfDayToMilitaryTimeFormat(startTime, endTime, startT
             if (startTimeNum > endTimeNum && timeHourIsNotTwelve(endTime)) {
                 endTimeNum += 1200;
             }
-            else if (startTimeNum < 430 && endTimeNum < 430) {
-                // Assume that both start and end time are in the afternoon if both are before 4:30
+            else if (startTimeNum < 530 && endTimeNum < 530) {
+                // Assume that both start and end time are in the afternoon if both are before 5:30
                 startTimeNum += 1200;
                 endTimeNum += 1200;
             }
@@ -383,10 +388,10 @@ function convertTimeAndTimesOfDayToMilitaryTimeFormat(startTime, endTime, startT
 }
 
 /**
- * 
- * @param {String} time 
- * @param {Boolean} isAfterNoon 
- * @returns {Number} -
+ * Converts a time to a 24 hour format
+ * @param {String} time - The time to be converted to a 24 hour format
+ * @param {Boolean} isAfterNoon - Denotes whether the given time is after 12:00pm
+ * @returns {Number} - The 24 hour time format of the given time 
  */
 function convertTimeToMilitaryTimeNumber(time, isAfterNoon) {
     if (time === undefined || time == null || time.length < 2 || isAfterNoon === undefined || isAfterNoon == null) {
