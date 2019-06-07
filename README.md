@@ -43,6 +43,11 @@
 
 ## Installation
 
+**Clone repository**
+```git
+git clone https://github.com/JoshiAbhishek/uw-scrapers.git
+```
+
 **Install Node Modules**
 * (You may need to install the puppeteer package separately: `npm install puppeteer`)
 
