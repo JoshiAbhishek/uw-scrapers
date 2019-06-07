@@ -7,9 +7,9 @@ const ParserUtils = require("../helpers/parser.js");
 const TimeUtils = require("../helpers/time.js");
 
 /**
- * 
- * @param {String} folderPath 
- * @returns {Object} - 
+ * Maps scraped UW Time Schedule data by building, room, and day of the week
+ * @param {String} folderPath - The file path of the folder with scraped UW Time Schedule data exported to JSON files
+ * @returns {Object} - An object mapping UW Time Schedule data by building, room, and day of the week
  */
 function mapTimeScheduleDataToLocationFromFolder(folderPath) {
     if (folderPath === undefined || folderPath == null || folderPath == "") {
@@ -37,9 +37,9 @@ function mapTimeScheduleDataToLocationFromFolder(folderPath) {
 }
 
 /**
- * 
- * @param {String} folderPath 
- * @param {Function} exportFunction 
+ * Exports mapped UW Time Schedule data
+ * @param {String} folderPath - The file path of the folder with scraped UW Time Schedule data exported to JSON files
+ * @param {Function} exportFunction - The function to callback with mapped UW Time Schedule data 
  */
 function exportTimeScheduleDataMappedToLocationFromFolder(folderPath, exportFunction) {
     if (arguments.length < 2) {
@@ -53,9 +53,9 @@ function exportTimeScheduleDataMappedToLocationFromFolder(folderPath, exportFunc
 }
 
 /**
- * 
- * @param {String} filePath 
- * @returns {Function} - 
+ * Maps scraped UW Time Schedule data by building, room, and day of the week
+ * @param {String} filePath - The file path of a JSON file with scraped UW Time Schedule data
+ * @returns {Object} - A object mapping UW Time Schedule data by building, room, and day of the week
  */
 function mapTimeScheduleDataToLocationFromFile(filePath) {
     if (filePath === undefined || filePath == null || filePath == "") {
@@ -71,9 +71,9 @@ function mapTimeScheduleDataToLocationFromFile(filePath) {
 }
 
 /**
- * 
- * @param {String} filePath 
- * @param {Function} exportFunction 
+ * Exports mapped UW Time Schedule data
+ * @param {String} filePath - The file path of a JSON file with scraped UW Time Schedule data
+ * @param {Function} exportFunction - The function to callback with mapped UW Time Schedule data 
  */
 function exportTimeScheduleDataMappedToLocationFromFile(filePath, exportFunction) {
     if (arguments.length < 2) {
@@ -87,10 +87,10 @@ function exportTimeScheduleDataMappedToLocationFromFile(filePath, exportFunction
 }
 
 /**
- * 
- * @param {Object[]} timeScheduleData 
- * @param {Object} finalObject 
- * @returns {Object} - 
+ * Maps scraped UW Time Schedule data by building, room, and day of the week
+ * @param {Object[]} timeScheduleData - Scrapped UW Time Schedule data to map
+ * @param {Object} finalObject - The object to add mapped UW Time Schedule data by building alias
+ * @returns {Object} - An object mapping UW Time Schedule data by building, room, and day of the week
  */
 function mapTimeScheduleDataToLocation(timeScheduleData, finalObject) {
     if (timeScheduleData === undefined || timeScheduleData == null) {
@@ -170,9 +170,9 @@ function mapTimeScheduleDataToLocation(timeScheduleData, finalObject) {
 }
 
 /**
- * 
- * @param {Object} course 
- * @returns {Object} - 
+ * Selects UW Time Schedule course properties to add to the mapped data
+ * @param {Object} course - A scrapped UW Time Schedule course
+ * @returns {Object} - The given UW Time Schedule course with specific properties
  */
 function formatTimeScheduleCourseForLocationMap(course) {
     var temp = {};
