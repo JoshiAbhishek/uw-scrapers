@@ -17,22 +17,28 @@ const BUTTON_SELECTOR = '#submit_button';
  * @param {String} url - The url to navigate to with a check for a UW NetID login requirement
  */
 async function navigateWithLoginCheck(page, url) {
-    var response = await page.goto(url, {waitUntil: 'networkidle0'});
-    var chain = response.request().redirectChain();
+    try {
+        var response = await page.goto(url, { waitUntil: 'networkidle2' });
+        var chain = response.request().redirectChain();
 
-    if (chain.length > 0) {
-        if (chain[chain.length - 1]._url.startsWith("https://idp.u.washington.edu/idp/profile/")) {
-            await page.click(USERNAME_SELECTOR);
-            await page.keyboard.type(CREDS.username);
+        if (chain.length > 0) {
+            if (chain[chain.length - 1]._url.startsWith("https://idp.u.washington.edu/idp/profile/")) {
+                await page.click(USERNAME_SELECTOR);
+                await page.keyboard.type(CREDS.username);
 
-            await page.click(PASSWORD_SELECTOR);
-            await page.keyboard.type(CREDS.password);
+                await page.click(PASSWORD_SELECTOR);
+                await page.keyboard.type(CREDS.password);
 
-            await Promise.all([
-                page.click(BUTTON_SELECTOR),
-                page.waitForNavigation( { 'waitUntil' : 'networkidle0' } )
-            ]);
+                await Promise.all([
+                    page.click(BUTTON_SELECTOR),
+                    page.waitForNavigation({ 'waitUntil': 'networkidle0' })
+                ]);
+            }
         }
+    }
+    catch (error) {
+        console.log(">> ERROR: Could not navigate to the requested URL...");
+        console.log(error);
     }
 }
 

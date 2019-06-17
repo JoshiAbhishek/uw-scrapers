@@ -273,26 +273,32 @@ async function scrapeCourseEvaluationsCatalogContentsPage(page, url) {
 
         var course = await scrapeCECCoursePage(page, coursePageLinks[j]["link"]);
 
-        //var majorKey = checkRegexGroup(course["alias"].replace(/[0-9]/g, "").toLowerCase().trim());
-        
-        var majorKey = course["major"].toLowerCase().replace(/\s+/g, "").trim();
-
-        //
-        if (majorKey != "") {
-            if (course.hasOwnProperty("instructor") && course["instructor"] != "") {
-                if (!majorMap.hasOwnProperty(majorKey)) {
-                    majorMap[majorKey] = [];
-                }
-
-                majorMap[majorKey].push(course);
-            }
-        }
-        else {
+        if (course["major"] === undefined || course["major"] == null || course["major"] == "") {
             console.log(">> Could not read alias for course: ");
             console.log("");
             console.log(course);
             console.log("<<");
             console.log("");
+        }
+        else {
+            var majorKey = course["major"].toLowerCase().replace(/\s+/g, "").trim();
+
+            if (majorKey != "") {
+                if (course.hasOwnProperty("instructor") && course["instructor"] != "") {
+                    if (!majorMap.hasOwnProperty(majorKey)) {
+                        majorMap[majorKey] = [];
+                    }
+
+                    majorMap[majorKey].push(course);
+                }
+            }
+            else {
+                console.log(">> Could not read alias for course: ");
+                console.log("");
+                console.log(course);
+                console.log("<<");
+                console.log("");
+            }
         }
     }
 
@@ -312,7 +318,7 @@ async function exportCourseEvaluationsCatalogByMajor(page, exportFunction) {
     console.log("> Scraping UW Course Catalog Information");
 
     for (let i = 0; i < cecTOCLinks.length; i++) {
-        console.log("Scraping CEC Table of Contents Page " + i + 1 + " / " + cecTOCLinks.length);
+        console.log("Scraping " + cecTOCLinks[i]);
 
         var courseEvaluationsMap = await scrapeCourseEvaluationsCatalogContentsPage(page, cecTOCLinks[i]);
 

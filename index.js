@@ -13,10 +13,14 @@ const TimeScheduleDataParser = require("./time_schedule/time_schedule_data_parse
 
 const DATA_EXPORT_BASE_URL = Path.join(__dirname, "./data/");
 
+process.on('unhandledRejection', (reason, promise) => {
+    console.log('>>ERROR: Unhandled Rejection at:', reason.stack || reason)
+});
+
 (async function main() {
     try {
         const browser = await Puppeteer.launch({
-            headless: true
+            headless: false
         });
 
         const mainPage = await browser.newPage();
@@ -34,13 +38,11 @@ const DATA_EXPORT_BASE_URL = Path.join(__dirname, "./data/");
 
         // Expose the extractCourseInfo function for use in the Puppeteer page instance by the Time Schedule scraper
         await mainPage.exposeFunction("extractCourseInfo", TimeScheduleScraper.extractCourseInfo);
-        
+
         // Scrape and export UW Time Schedule information by major for a quarter
-        /*
         await TimeScheduleScraper.exportCoursesByMajorAndQuarter(mainPage, "SPR2019", function(file_name, data) {
-            ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "SPR2019/", file_name, "data", data);
+            ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "AUT2019/", file_name, "data", data);
         });
-        */
 
         // Parse and export the UW Time Schedule data by grouping courses in to arrays mapped from building, room, and day of the week 
         /*
