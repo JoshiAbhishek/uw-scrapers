@@ -62,7 +62,7 @@ Array.prototype.extend = function (other) {
  * @returns {String} - An empty string if the passed string is not valid, or the passed string with no surrounding whitespaces 
  */
 function checkRegexGroup(str) {
-    return (str === undefined || str == null || str == " " || /[\*\s]+/.test(str.trim()) || str.trim() == "to be arranged" ? "" : str.trim());
+    return (str === undefined || str == null || str == " " || /^[\*\s]+$/.test(str.trim()) || str.trim() == "to be arranged" ? "" : str.trim());
 }
 
 /**

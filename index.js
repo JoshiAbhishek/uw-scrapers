@@ -20,7 +20,7 @@ process.on('unhandledRejection', (reason, promise) => {
 (async function main() {
     try {
         const browser = await Puppeteer.launch({
-            headless: false
+            headless: true
         });
 
         const mainPage = await browser.newPage();
@@ -40,13 +40,15 @@ process.on('unhandledRejection', (reason, promise) => {
         await mainPage.exposeFunction("extractCourseInfo", TimeScheduleScraper.extractCourseInfo);
 
         // Scrape and export UW Time Schedule information by major for a quarter
-        await TimeScheduleScraper.exportCoursesByMajorAndQuarter(mainPage, "SPR2019", function(file_name, data) {
+        /*
+        await TimeScheduleScraper.exportCoursesByMajorAndQuarter(mainPage, "AUT2019", function(file_name, data) {
             ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "AUT2019/", file_name, "data", data);
         });
+        */
 
         // Parse and export the UW Time Schedule data by grouping courses in to arrays mapped from building, room, and day of the week 
         /*
-        TimeScheduleDataParser.exportTimeScheduleDataMappedToLocationFromFolder(DATA_EXPORT_BASE_URL + "SPR2019/", function (data) {
+        TimeScheduleDataParser.exportTimeScheduleDataMappedToLocationFromFolder(DATA_EXPORT_BASE_URL + "AUT2019/", function (data) {
             ExportUtils.exportJSONObject(DATA_EXPORT_BASE_URL, "TSMAP.json", data);
         });
         */
