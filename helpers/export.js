@@ -69,10 +69,11 @@ function exportJSONArray(dataDirectory, fileName, propertyName, data) {
 }
 
 /**
- * 
- * @param {*} headersArray 
- * @param {*} data 
- * @param {*} delimiter 
+ * Creates a delimited string representation of an array of objects
+ * @param {*} headersArray - The properties of objects in the array to be represented as columns
+ * @param {*} data - The data to be exported
+ * @param {*} delimiter - The delimiter to be used for each row of data values
+ * @returns {String} - A delimited string representation of the given data
  */
 function convertDataToDelimitedString(headersArray, data, delimiter) {
     var result = headersArray.join(delimiter) + "\n";

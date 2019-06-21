@@ -68,7 +68,7 @@ process.on('unhandledRejection', (reason, promise) => {
         });
         */
 
-        // Parse and export UW Course Evaluations Catalog data by expanding evaluations by question responses
+        // Parse and export UW Course Evaluations Catalog data by expanding evaluations for each question
         /*
         await CECDataParser.exportExpandedCECMajorDataFromFile(DATA_EXPORT_BASE_URL + "CEC/econ.json", function(headers, data) {
             ExportUtils.exportJSONArrayToCSV(DATA_EXPORT_BASE_URL, "econCECData.csv", headers, data);

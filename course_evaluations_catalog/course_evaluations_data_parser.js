@@ -3,26 +3,26 @@
 const ImportUtils = require("../helpers/import.js");
 
 /**
- * 
- * @param {Object[]} data 
- * @returns {Object[]} - 
+ * Expands evaluations of a major's courses by evaluation question
+ * @param {Object[]} data - The CEC data of a major to be expanded by evaluation questions
+ * @returns {Object[]} - The expanded CEC data 
  */
 function expandCECMajorData(data) {
-    if(data === undefined || data == null) {
+    if (data === undefined || data == null) {
         return null;
     }
 
     var newDataArray = [];
 
-    for(let i = 0; i < data.length; i++) {
-        for(let j = 0; j < data[i]["questions"].length; j++) {
+    for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < data[i]["questions"].length; j++) {
             var temp = JSON.parse(JSON.stringify(data[i]));
             delete temp["questions"];
 
-            for(var attr in data[i]["questions"][j]) {
+            for (var attr in data[i]["questions"][j]) {
                 temp[attr] = data[i]["questions"][j][attr];
             }
-            
+
             newDataArray.push(temp);
         }
     }
@@ -31,9 +31,9 @@ function expandCECMajorData(data) {
 }
 
 /**
- * 
- * @param {*} filePath 
- * @returns {*} - 
+ * Expands evaluations of a major's courses by evaluation question from a file
+ * @param {String} filePath - The file path of a JSON file with scraped UW CEC data
+ * @returns {Object[]} - The expanded CEC data 
  */
 function expandCECMajorDataFromFile(filePath) {
     if (filePath === undefined || filePath == null || filePath == "") {
@@ -49,10 +49,9 @@ function expandCECMajorDataFromFile(filePath) {
 }
 
 /**
- * 
- * @param {*} filePath 
- * @param {*} exportFunction 
- * @returns {*} - 
+ * Exports expanded UW CEC Major data
+ * @param {String} filePath - The file path of a JSON file with scraped UW CEC data
+ * @param {Function} exportFunction - The function to callback with parsed UW CEC data 
  */
 function exportExpandedCECMajorDataFromFile(filePath, exportFunction) {
     if (arguments.length < 2) {
