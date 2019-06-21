@@ -128,3 +128,136 @@ Scrapes and exports course evaluations for all courses
 | --- | --- | --- |
 | page | <code>Object</code> | The current Puppeteer page instance |
 | exportFunction | <code>function</code> | The exportFunction to callback with data |
+
+# course_evaluations_data_parser.js
+
+## Functions
+
+<dl>
+<dt><a href="#exportFoundation">exportFoundation(dataDirectory, fileName, data, fileExtension)</a> ⇒ <code>String</code></dt>
+<dd><p>Forms the final URL to export data to</p>
+</dd>
+<dt><a href="#exportJSONObject">exportJSONObject(dataDirectory, fileName, data)</a></dt>
+<dd><p>Exports an object to the file system as a JSON file</p>
+</dd>
+<dt><a href="#exportJSONArray">exportJSONArray(dataDirectory, fileName, propertyName, data)</a></dt>
+<dd><p>Exports an array of objects to the file system as a JSON file</p>
+</dd>
+<dt><a href="#convertDataToDelimitedString">convertDataToDelimitedString(headersArray, data, delimiter)</a> ⇒ <code>String</code></dt>
+<dd><p>Creates a delimited string representation of an array of objects</p>
+</dd>
+<dt><a href="#exportJSONArrayToCSV">exportJSONArrayToCSV(dataDirectory, fileName, headersArray, data)</a></dt>
+<dd><p>Exports an array to the file system as a CSV file</p>
+</dd>
+<dt><a href="#exportJSONArrayToTSV">exportJSONArrayToTSV(dataDirectory, fileName, headersArray, data)</a></dt>
+<dd><p>Exports an array to the file system as a TSV file</p>
+</dd>
+</dl>
+
+<a name="exportFoundation"></a>
+
+## exportFoundation(dataDirectory, fileName, data, fileExtension) ⇒ <code>String</code>
+Forms the final URL to export data to
+
+**Kind**: global function
+**Returns**: <code>String</code> - - The local url of the file to be exported
+
+| Param | Type | Description |
+| --- | --- | --- |
+| dataDirectory | <code>String</code> | The file directory to export data to |
+| fileName | <code>String</code> | The name of the file to be exported |
+| data | <code>Object</code> | The data to be exported |
+| fileExtension | <code>String</code> | The extension of the file to be exported |
+
+<a name="exportJSONObject"></a>
+
+## exportJSONObject(dataDirectory, fileName, data)
+Exports an object to the file system as a JSON file
+
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| dataDirectory | <code>String</code> | The file directory to export data to |
+| fileName | <code>String</code> | The name of the file to be exported |
+| data | <code>Object</code> | The data to be exported |
+
+<a name="exportJSONArray"></a>
+
+## exportJSONArray(dataDirectory, fileName, propertyName, data)
+Exports an array of objects to the file system as a JSON file
+
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| dataDirectory | <code>String</code> | The file directory to export data to |
+| fileName | <code>String</code> | The name of the file to be exported |
+| propertyName | <code>String</code> | The name of the property the exported data will be assigned to |
+| data | <code>Array.&lt;Object&gt;</code> | The data to be exported |
+
+<a name="convertDataToDelimitedString"></a>
+
+## convertDataToDelimitedString(headersArray, data, delimiter) ⇒ <code>String</code>
+Creates a delimited string representation of an array of objects
+
+**Kind**: global function
+**Returns**: <code>String</code> - - A delimited string representation of the given data
+
+| Param | Type | Description |
+| --- | --- | --- |
+| headersArray | <code>\*</code> | The properties of objects in the array to be represented as columns |
+| data | <code>\*</code> | The data to be exported |
+| delimiter | <code>\*</code> | The delimiter to be used for each row of data values |
+
+<a name="exportJSONArrayToCSV"></a>
+PS C:\Users\joshi\Documents\GitHub\uw-scrapers> jsdoc2md .\course_evaluations_catalog\course_evaluations_data_parser.js
+## Functions
+
+<dl>
+<dt><a href="#expandCECMajorData">expandCECMajorData(data)</a> ⇒ <code>Array.&lt;Object&gt;</code></dt>
+<dd><p>Expands evaluations of a major&#39;s courses by evaluation question</p>
+</dd>
+<dt><a href="#expandCECMajorDataFromFile">expandCECMajorDataFromFile(filePath)</a> ⇒ <code>Array.&lt;Object&gt;</code></dt>
+<dd><p>Expands evaluations of a major&#39;s courses by evaluation question from a file</p>
+</dd>
+<dt><a href="#exportExpandedCECMajorDataFromFile">exportExpandedCECMajorDataFromFile(filePath, exportFunction)</a></dt>
+<dd><p>Exports expanded UW CEC Major data</p>
+</dd>
+</dl>
+
+<a name="expandCECMajorData"></a>
+
+## expandCECMajorData(data) ⇒ <code>Array.&lt;Object&gt;</code>
+Expands evaluations of a major's courses by evaluation question
+
+**Kind**: global function
+**Returns**: <code>Array.&lt;Object&gt;</code> - - The expanded CEC data
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>Array.&lt;Object&gt;</code> | The CEC data of a major to be expanded by evaluation questions |
+
+<a name="expandCECMajorDataFromFile"></a>
+
+## expandCECMajorDataFromFile(filePath) ⇒ <code>Array.&lt;Object&gt;</code>
+Expands evaluations of a major's courses by evaluation question from a file
+
+**Kind**: global function
+**Returns**: <code>Array.&lt;Object&gt;</code> - - The expanded CEC data
+
+| Param | Type | Description |
+| --- | --- | --- |
+| filePath | <code>String</code> | The file path of a JSON file with scraped UW CEC data |
+
+<a name="exportExpandedCECMajorDataFromFile"></a>
+
+## exportExpandedCECMajorDataFromFile(filePath, exportFunction)
+Exports expanded UW CEC Major data
+
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| filePath | <code>String</code> | The file path of a JSON file with scraped UW CEC data |
+| exportFunction | <code>function</code> | The function to callback with parsed UW CEC data |

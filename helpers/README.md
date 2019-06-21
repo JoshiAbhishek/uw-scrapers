@@ -3,7 +3,7 @@
 ## Functions
 
 <dl>
-<dt><a href="#exportFoundation">exportFoundation(dataDirectory, fileName, data)</a> ⇒ <code>String</code></dt>
+<dt><a href="#exportFoundation">exportFoundation(dataDirectory, fileName, data, fileExtension)</a> ⇒ <code>String</code></dt>
 <dd><p>Forms the final URL to export data to</p>
 </dd>
 <dt><a href="#exportJSONObject">exportJSONObject(dataDirectory, fileName, data)</a></dt>
@@ -12,14 +12,20 @@
 <dt><a href="#exportJSONArray">exportJSONArray(dataDirectory, fileName, propertyName, data)</a></dt>
 <dd><p>Exports an array of objects to the file system as a JSON file</p>
 </dd>
+<dt><a href="#convertDataToDelimitedString">convertDataToDelimitedString(headersArray, data, delimiter)</a> ⇒ <code>String</code></dt>
+<dd><p>Creates a delimited string representation of an array of objects</p>
+</dd>
 <dt><a href="#exportJSONArrayToCSV">exportJSONArrayToCSV(dataDirectory, fileName, headersArray, data)</a></dt>
 <dd><p>Exports an array to the file system as a CSV file</p>
+</dd>
+<dt><a href="#exportJSONArrayToTSV">exportJSONArrayToTSV(dataDirectory, fileName, headersArray, data)</a></dt>
+<dd><p>Exports an array to the file system as a TSV file</p>
 </dd>
 </dl>
 
 <a name="exportFoundation"></a>
 
-## exportFoundation(dataDirectory, fileName, data) ⇒ <code>String</code>
+## exportFoundation(dataDirectory, fileName, data, fileExtension) ⇒ <code>String</code>
 Forms the final URL to export data to
 
 **Kind**: global function
@@ -30,6 +36,7 @@ Forms the final URL to export data to
 | dataDirectory | <code>String</code> | The file directory to export data to |
 | fileName | <code>String</code> | The name of the file to be exported |
 | data | <code>Object</code> | The data to be exported |
+| fileExtension | <code>String</code> | The extension of the file to be exported |
 
 <a name="exportJSONObject"></a>
 
@@ -58,10 +65,38 @@ Exports an array of objects to the file system as a JSON file
 | propertyName | <code>String</code> | The name of the property the exported data will be assigned to |
 | data | <code>Array.&lt;Object&gt;</code> | The data to be exported |
 
+<a name="convertDataToDelimitedString"></a>
+
+## convertDataToDelimitedString(headersArray, data, delimiter) ⇒ <code>String</code>
+Creates a delimited string representation of an array of objects
+
+**Kind**: global function
+**Returns**: <code>String</code> - - A delimited string representation of the given data
+
+| Param | Type | Description |
+| --- | --- | --- |
+| headersArray | <code>\*</code> | The properties of objects in the array to be represented as columns |
+| data | <code>\*</code> | The data to be exported |
+| delimiter | <code>\*</code> | The delimiter to be used for each row of data values |
+
 <a name="exportJSONArrayToCSV"></a>
 
 ## exportJSONArrayToCSV(dataDirectory, fileName, headersArray, data)
 Exports an array to the file system as a CSV file
+
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| dataDirectory | <code>String</code> | The file directory to export data to |
+| fileName | <code>String</code> | The name of the file to be exported |
+| headersArray | <code>Array.&lt;String&gt;</code> | The headers corresponding to the data's properties |
+| data | <code>Array.&lt;Object&gt;</code> | The data to be exported |
+
+<a name="exportJSONArrayToTSV"></a>
+
+## exportJSONArrayToTSV(dataDirectory, fileName, headersArray, data)
+Exports an array to the file system as a TSV file
 
 **Kind**: global function
 
