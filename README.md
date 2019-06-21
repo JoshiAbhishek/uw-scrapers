@@ -113,7 +113,7 @@ Development Checklist:
 - [x] Course Evaluations Catalog Scraper
 - [x] Parsers for mapping object properties
 - [x] Time Schedule parser for [uw-room-hours](https://github.com/JoshiAbhishek/uw-room-hours)
-- [x] Course Evaluations Catalog parser for data analysis 
+- [x] Course Evaluations Catalog parser for [uw-analysis](https://github.com/JoshiAbhishek/uw-analysis)
 - [x] Export to CSV
 - [ ] Major Information Scraper
 
