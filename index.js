@@ -10,6 +10,7 @@ const CourseCatalogScraper = require("./course_catalog/course_catalog_scraper.js
 const CourseEvaluationsCatalogScraper = require("./course_evaluations_catalog/course_evaluations_scraper.js");
 
 const TimeScheduleDataParser = require("./time_schedule/time_schedule_data_parser.js");
+const CECDataParser = require("./course_evaluations_catalog/course_evaluations_data_parser.js");
 
 const DATA_EXPORT_BASE_URL = Path.join(__dirname, "./data/");
 
@@ -64,6 +65,13 @@ process.on('unhandledRejection', (reason, promise) => {
         /*
         await CourseEvaluationsCatalogScraper.exportCourseEvaluationsCatalogByMajor(mainPage, function(file_name, data) {
             ExportUtils.exportJSONArray(DATA_EXPORT_BASE_URL + "CEC/", file_name, "data", data);
+        });
+        */
+
+        // Parse and export UW Course Evaluations Catalog data by expanding evaluations by question responses
+        /*
+        await CECDataParser.exportExpandedCECMajorDataFromFile(DATA_EXPORT_BASE_URL + "CEC/econ.json", function(headers, data) {
+            ExportUtils.exportJSONArrayToCSV(DATA_EXPORT_BASE_URL, "econCECData.csv", headers, data);
         });
         */
 

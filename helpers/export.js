@@ -7,11 +7,17 @@ const FS = require('fs');
  * @param {String} dataDirectory - The file directory to export data to
  * @param {String} fileName - The name of the file to be exported
  * @param {Object} data - The data to be exported
+ * @param {String} fileExtension - The extension of the file to be exported
  * @returns {String} - The local url of the file to be exported 
  */
-function exportFoundation(dataDirectory, fileName, data) {
+function exportFoundation(dataDirectory, fileName, data, fileExtension) {
     if (data === undefined || data == null) {
         console.log(">> ERROR: data must be defined and not null to export");
+        return null;
+    }
+
+    if (data === fileExtension || data == fileExtension) {
+        console.log(">> ERROR: fileExtension must be defined and not null to export");
         return null;
     }
 
@@ -20,13 +26,13 @@ function exportFoundation(dataDirectory, fileName, data) {
         return null;
     }
 
-    if (!fileName.endsWith(".json")) {
-        fileName += ".json";
+    if (!fileName.endsWith(fileExtension)) {
+        fileName += fileExtension;
     }
 
     var url = dataDirectory + fileName;
 
-    if(url != null) {
+    if (url != null) {
         console.log("> Exporting to " + url);
     }
 
@@ -40,7 +46,7 @@ function exportFoundation(dataDirectory, fileName, data) {
  * @param {Object} data - The data to be exported
  */
 function exportJSONObject(dataDirectory, fileName, data) {
-    var url = exportFoundation(dataDirectory, fileName, data);
+    var url = exportFoundation(dataDirectory, fileName, data, ".json");
     if (url == null) { return; }
 
     var json = JSON.stringify(data);
@@ -55,11 +61,31 @@ function exportJSONObject(dataDirectory, fileName, data) {
  * @param {Object[]} data - The data to be exported
  */
 function exportJSONArray(dataDirectory, fileName, propertyName, data) {
-    var url = exportFoundation(dataDirectory, fileName, data);
+    var url = exportFoundation(dataDirectory, fileName, data, ".json");
     if (url == null) { return; }
 
     var json = JSON.stringify({ [propertyName]: data });
     FS.writeFileSync(url, json, 'utf8');
+}
+
+/**
+ * 
+ * @param {*} headersArray 
+ * @param {*} data 
+ * @param {*} delimiter 
+ */
+function convertDataToDelimitedString(headersArray, data, delimiter) {
+    var result = headersArray.join(delimiter) + "\n";
+
+    data.forEach(function (obj) {
+        headersArray.forEach(function (k, ix) {
+            if (ix) result += delimiter;
+            result += obj[k];
+        });
+        result += "\n";
+    });
+
+    return result;
 }
 
 /**
@@ -70,14 +96,34 @@ function exportJSONArray(dataDirectory, fileName, propertyName, data) {
  * @param {Object[]} data - The data to be exported
  */
 function exportJSONArrayToCSV(dataDirectory, fileName, headersArray, data) {
-    var url = exportFoundation(dataDirectory, fileName, data);
+    var url = exportFoundation(dataDirectory, fileName, data, ".csv");
     if (url == null) { return; }
 
-    
+    var delimitedString = convertDataToDelimitedString(headersArray, data, ",");
+
+    FS.writeFileSync(url, delimitedString, 'utf8');
+}
+
+/**
+ * Exports an array to the file system as a TSV file
+ * @param {String} dataDirectory - The file directory to export data to
+ * @param {String} fileName - The name of the file to be exported
+ * @param {String[]} headersArray - The headers corresponding to the data's properties
+ * @param {Object[]} data - The data to be exported
+ */
+function exportJSONArrayToTSV(dataDirectory, fileName, headersArray, data) {
+    var url = exportFoundation(dataDirectory, fileName, data, ".csv");
+    if (url == null) { return; }
+
+    var delimitedString = convertDataToDelimitedString(headersArray, data, "\t");
+
+    FS.writeFileSync(url, delimitedString, 'utf8');
 }
 
 module.exports = {
     exportJSONObject,
     exportJSONArray,
-    exportJSONArrayToCSV
+    convertDataToDelimitedString,
+    exportJSONArrayToCSV,
+    exportJSONArrayToTSV
 };

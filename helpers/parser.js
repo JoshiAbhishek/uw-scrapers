@@ -214,7 +214,7 @@ function expandObjectArrayByRelatedArrayProperties(objectArray, relatedPropertie
                     }
                 }
             }
-
+            
             // pass to custom value parser if defined
             if (customValueParser != undefined && customValueParser != null) {
                 temp = customValueParser(temp);
